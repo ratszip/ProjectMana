@@ -1,0 +1,18 @@
+
+# 应用服务 WEB 访问端口
+#serverport=8080
+
+
+
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://106.52.174.44:3306/PM?serverTimezone=UTC
+      username: root
+      password: root
+  application:
+    name: springthf
+mybatis:
+  mapper-locations: classpath:mappers/*Mapper.xml
+  type-aliases-package: com.thf.entity
