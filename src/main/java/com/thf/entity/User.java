@@ -19,4 +19,5 @@ public class User {
     private String userPhone;
     private String userEmail;
     private String userAddress;
+    private String userImg;
 }

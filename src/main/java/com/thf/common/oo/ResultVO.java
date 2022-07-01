@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "统一请求的返回对象")
 public class ResultVO<T> {
-    @ApiModelProperty(value = "错误代码")
+    @ApiModelProperty(value = "状态码")
     private Integer code;
-    @ApiModelProperty(value = "消息")
+    @ApiModelProperty(value = "说明")
     private String msg;
-    @ApiModelProperty(value = "对应返回数据")
+    @ApiModelProperty(value = "数据")
     private T data;
 
     public ResultVO(int code, String mesage) {
