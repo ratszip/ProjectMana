@@ -3,9 +3,9 @@ package com.thf.dao;
 import com.thf.entity.User;
 
 public interface UserDAO {
-    int insertUser(User user);
+    public int insertUser(User user);
 
-    User searchUser(String key);
+    public User searchUsers(String key);
 
-    int updateUser(User user);
+    public int updateUsers(User user);
 }
