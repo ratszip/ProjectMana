@@ -11,13 +11,13 @@ import lombok.ToString;
 @ToString
 public class User {
     private int userId;
-    private char userType;
-    private String userName;
-    private String userPwd;
+    private int userType;
+    private String username;
+    private String password;
     private String userIntroduce;
     private String registerTime;
-    private String userPhone;
-    private String userEmail;
+    private String phone;
+    private String email;
     private String userAddress;
     private String userImg;
 }

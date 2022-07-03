@@ -14,13 +14,17 @@ public class UserServiceImpl implements UserService {
     private UserDAO userDAO;
 
     public User insertUser(User user) {
-        userDAO.insertUser(user);
-        return null;
+        int i = userDAO.insertUser(user);
+        if (i > 0) {
+            return user;
+        } else {
+            return null;
+        }
     }
 
 
     @Override
-    public User searchUser(User user) {
-        return null;
+    public User searchUserEmail(String key) {
+        return userDAO.searchUsers(key);
     }
 }

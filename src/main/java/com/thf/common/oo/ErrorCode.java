@@ -6,9 +6,9 @@ public enum  ErrorCode implements IErrorCode {
      * 2. 错误码按模块进行错误码规划
      * 3. 所有错误码枚举类均需要实现错误码接口类
      */
-    SUCCESS(2000,""),
-    PARAM_ERROR(4000,"请求参数错误"),
-    SERVER_ERROR(5000,"服务器异常");
+    SUCCESS(2000),
+    PARAM_ERROR(4000),
+    SERVER_ERROR(5000);
 //    SYSTEM_BUSY(10000,"系统繁忙,请稍后再试!"),
 //    FORM_VALIDATION_ERROR(10001,"表单验证错误"),
     // 用户登录方面错误码
@@ -20,6 +20,12 @@ public enum  ErrorCode implements IErrorCode {
 
     ErrorCode(Integer code,String message){
         this.code=code;
+        this.msg=message;
+    }
+    ErrorCode(Integer code){
+        this.code=code;
+    }
+    ErrorCode(String message){
         this.msg=message;
     }
 

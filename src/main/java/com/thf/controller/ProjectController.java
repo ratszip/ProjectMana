@@ -1,5 +1,7 @@
 package com.thf.controller;
 
+import com.thf.common.oo.ErrorCode;
+import com.thf.common.oo.RV;
 import com.thf.common.oo.ResultVO;
 import com.thf.entity.Project;
 import com.thf.service.ProjectService;
@@ -24,19 +26,19 @@ public class ProjectController {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",value ="项目名",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="projectDesc",value ="描述",dataType = "String",paramType = "body"),
+            @ApiImplicitParam(name="describe",value ="描述",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="relateUser",value ="关联人",dataType = "int",paramType = "body")
     })
     @ApiOperation(value = "创建项目",httpMethod = "POST")
     @RequestMapping("/create")
     public ResultVO createProject(@ApiIgnore Project project){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,project);
     }
 
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",value ="项目名",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="projectDesc",value ="描述",dataType = "String",paramType = "body"),
+            @ApiImplicitParam(name="describe",value ="描述",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="relateUser",value ="关联人",dataType = "int",paramType = "body"),
             @ApiImplicitParam(name="projectStatus",value ="项目进度",dataType = "int",paramType = "body")
     })
@@ -44,7 +46,7 @@ public class ProjectController {
     @RequestMapping("/update")
     public ResultVO updateProject(@ApiIgnore Project project ){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,project);
     }
 
     @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body")
@@ -52,6 +54,6 @@ public class ProjectController {
     @RequestMapping("/search")
     public ResultVO searchProject(String key){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,key);
     }
 }

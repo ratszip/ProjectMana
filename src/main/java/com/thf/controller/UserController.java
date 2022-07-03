@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
@@ -31,14 +32,25 @@ public class UserController {
             @ApiImplicitParam(name="userPhone",value ="手机号",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="userEmail",value ="邮箱和手机号必填一个",required = true,dataType = "String",paramType = "body"),
             @ApiImplicitParam(name = "userPwd",value ="密码",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name = "verifyCode",value ="验证码",required = true,dataType = "int",paramType = "body"),
-            @ApiImplicitParam(name = "verifyType",value ="注册方式",required = true,dataType = "int",paramType = "body")
+            @ApiImplicitParam(name = "verifyCode",value ="验证码",required = true,dataType = "String",paramType = "body"),
+            @ApiImplicitParam(name = "verifyType",value ="注册方式",required = true,dataType = "Integer",paramType = "body")
     })
     @ApiOperation(value = "用户注册",httpMethod = "POST")
     @RequestMapping("/register")
-    public ResultVO regist(@ApiIgnore @MultiRequestBody User user, @MultiRequestBody VerifyCode verifyCode){
+    public ResultVO regist(@ApiIgnore @RequestBody User user, String verifyCode, Integer verifyType){
+        System.out.println("--------------"+user.getEmail()+","+user.getPassword());
 
-        return RV.success(null);
+        if(userService.searchUserEmail(user.getEmail())==null){
+            user.setRegisterTime(String.valueOf(System.currentTimeMillis()));
+            if(userService.insertUser(user)!=null) {
+                return new ResultVO<>(2000, "注册成功", user);
+            }else {
+                return new ResultVO<>(2000, "注册失败", "");
+            }
+        }else {
+            return new ResultVO<>(2000, "用户已存在，请登录", "");
+        }
+
     }
 
     @ApiImplicitParams({
@@ -51,37 +63,37 @@ public class UserController {
     @RequestMapping("/update")
     public ResultVO update(@ApiIgnore User user){
 
-        return RV.fail(ErrorCode.PARAM_ERROR);
+        return RV.result(ErrorCode.SUCCESS,user);
     }
 
     @ApiOperation(value = "发送验证码",httpMethod = "POST")
-    @RequestMapping("/verify")
+    @RequestMapping("/verifycode")
     public ResultVO sendVerifyCode(){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,"");
     }
 
     @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body")
-    @ApiOperation(value = "发送验证码",httpMethod = "POST")
+    @ApiOperation(value = "搜索用户",httpMethod = "POST")
     @RequestMapping("/search")
     public ResultVO search(String key){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,key);
     }
 
     @ApiOperation(value = "获取用户信息",httpMethod = "POST")
     @RequestMapping("/info")
     public ResultVO userInfo(){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,"userinfo");
     }
 
     @ApiImplicitParam(name="newPwd",value ="新密码",dataType = "String",paramType = "body")
     @ApiOperation(value = "重置密码",httpMethod = "POST")
     @RequestMapping("/reset")
-    public ResultVO resetPwd(String userPwd){
+    public ResultVO resetPwd(String newPwd){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,newPwd);
     }
 
     @ApiImplicitParams({
@@ -92,7 +104,7 @@ public class UserController {
     @RequestMapping("/resetcontact")
     public ResultVO resetContact(int type,String newContact){
 
-        return null;
+        return RV.result(ErrorCode.SUCCESS,newContact);
     }
 
 
