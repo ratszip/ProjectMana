@@ -11,7 +11,7 @@ import lombok.ToString;
 public class Project {
     private int projectId;
     private String projectName;
-    private String projectDesc;
+    private String describe;
     private int projectStatus;
     private int createdUser;
     private String createdTime;
