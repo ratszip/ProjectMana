@@ -1,7 +1,9 @@
 package com.thf.controller;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.thf.common.oo.ErrorCode;
 import com.thf.common.oo.RV;
+import com.thf.common.utils.PMUtils;
 import com.thf.config.MultiRequestBody;
 import com.thf.entity.User;
 import com.thf.common.oo.ResultVO;
@@ -30,28 +32,61 @@ public class UserController {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name="userPhone",value ="手机号",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="userEmail",value ="邮箱和手机号必填一个",required = true,dataType = "String",paramType = "body"),
+            @ApiImplicitParam(name="userEmail",value ="邮箱和手机号必填一个",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name = "userPwd",value ="密码",required = true,dataType = "String",paramType = "body"),
             @ApiImplicitParam(name = "verifyCode",value ="验证码",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name = "verifyType",value ="注册方式",required = true,dataType = "Integer",paramType = "body")
+            @ApiImplicitParam(name = "verifyType",value ="1.邮箱2手机",required = true,dataType = "Integer",paramType = "body")
     })
     @ApiOperation(value = "用户注册",httpMethod = "POST")
     @RequestMapping("/register")
     public ResultVO regist(@ApiIgnore @RequestBody User user, String verifyCode, Integer verifyType){
-        System.out.println("--------------"+user.getEmail()+","+user.getPassword());
-
-        if(userService.searchUserEmail(user.getEmail())==null){
-            user.setRegisterTime(String.valueOf(System.currentTimeMillis()));
-            if(userService.insertUser(user)!=null) {
-                return new ResultVO<>(2000, "注册成功", user);
-            }else {
-                return new ResultVO<>(2000, "注册失败", "");
-            }
-        }else {
-            return new ResultVO<>(2000, "用户已存在，请登录", "");
+//        System.out.println("--------------"+user.getEmail()+","+user.getPassword());
+        String email=user.getEmail();
+        String phone=user.getPhone();
+        String password=user.getPassword();
+        user.setRegisterTime(String.valueOf(System.currentTimeMillis()));
+        if(password.trim()==""){
+            return new ResultVO<>(2000, "密码不能为空", "");
+        }else if(verifyCode.trim()==""){
+            return new ResultVO<>(2000, "验证码不能为空", "");
         }
 
+        if(verifyType==1){
+            if (email.trim() == "") {
+                return new ResultVO<>(2000, "邮箱不能空", "");
+            }
+            phone=null;
+            if (userService.searchUserEmail(email) == null) {
+                if (userService.insertUser(user) != null) {
+                    return new ResultVO<>(2000, "注册成功", user);
+                } else {
+                    return new ResultVO<>(2000, "注册失败", "");
+                }
+            } else {
+                return new ResultVO<>(2000, "用户已存在，请登录", "");
+            }
+        }else if(verifyType==2){
+            if (phone.trim() == "") {
+                return new ResultVO<>(2000, "手机不能空", "");
+            }
+            email=null;
+            if (userService.searchUserEmail(phone) == null) {
+                if (userService.insertUser(user) != null) {
+                    return new ResultVO<>(2000, "注册成功", user);
+                } else {
+                    return new ResultVO<>(2000, "注册失败", "");
+                }
+            } else {
+                return new ResultVO<>(2000, "用户已存在，请登录", "");
+            }
+        }else
+
+
+        return new ResultVO<>(2000, "verifyType有误", "");
+
     }
+
+
 
     @ApiImplicitParams({
             @ApiImplicitParam(name="userName",value ="用户名",dataType = "String",paramType = "body"),
@@ -69,7 +104,7 @@ public class UserController {
     @ApiOperation(value = "发送验证码",httpMethod = "POST")
     @RequestMapping("/verifycode")
     public ResultVO sendVerifyCode(){
-
+        String verifyCode=PMUtils.createVerifyCode(6);
         return RV.result(ErrorCode.SUCCESS,"");
     }
 

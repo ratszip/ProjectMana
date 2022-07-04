@@ -7,7 +7,7 @@ public class PMUtils {
     /**
      * 生成n位数的随机验证码
      */
-    private String createVerifyCode(int n){
+    public static String createVerifyCode(int n){
         Random r = new Random();
         StringBuffer sb =new StringBuffer();
         for(int i = 0;i < n;i ++){
