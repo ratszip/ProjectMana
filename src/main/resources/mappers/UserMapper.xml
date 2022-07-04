@@ -45,6 +45,13 @@
             user_address,
             user_img
         from users
-        where email = #{email}
+        where 1=1
+        <if test="email != null and email!=''">
+            email = #{email}
+        </if>
+        <if test="phone != null and phone!=''">
+            phone = #{phone}
+        </if>
+
     </select>
 </mapper>
