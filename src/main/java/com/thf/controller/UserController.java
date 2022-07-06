@@ -39,8 +39,8 @@ public class UserController {
     })
     @ApiOperation(value = "用户注册",httpMethod = "POST")
     @RequestMapping("/register")
-    public ResultVO regist(@ApiIgnore @RequestBody User user, String verifyCode, Integer verifyType){
-//        System.out.println("--------------"+user.getEmail()+","+user.getPassword());
+    public ResultVO regist(@ApiIgnore @MultiRequestBody User user, @MultiRequestBody String verifyCode,@MultiRequestBody Integer verifyType){
+        System.out.println("--------------"+user.getEmail()+","+user.getPassword()+","+verifyCode+","+verifyType);
         String email=user.getEmail();
         String phone=user.getPhone();
         String password=user.getPassword();
@@ -55,7 +55,7 @@ public class UserController {
             if (email.trim() == "") {
                 return new ResultVO<>(2000, "邮箱不能空", "");
             }
-            phone=null;
+            user.setPhone("");
             if (userService.searchUserEmail(email) == null) {
                 if (userService.insertUser(user) != null) {
                     return new ResultVO<>(2000, "注册成功", user);
@@ -69,8 +69,8 @@ public class UserController {
             if (phone.trim() == "") {
                 return new ResultVO<>(2000, "手机不能空", "");
             }
-            email=null;
-            if (userService.searchUserEmail(phone) == null) {
+            user.setEmail("");
+            if (userService.searchUserPhone(phone) == null) {
                 if (userService.insertUser(user) != null) {
                     return new ResultVO<>(2000, "注册成功", user);
                 } else {
@@ -80,10 +80,7 @@ public class UserController {
                 return new ResultVO<>(2000, "用户已存在，请登录", "");
             }
         }else
-
-
         return new ResultVO<>(2000, "verifyType有误", "");
-
     }
 
 
@@ -101,12 +98,12 @@ public class UserController {
         return RV.result(ErrorCode.SUCCESS,user);
     }
 
-    @ApiOperation(value = "发送验证码",httpMethod = "POST")
-    @RequestMapping("/verifycode")
-    public ResultVO sendVerifyCode(){
-        String verifyCode=PMUtils.createVerifyCode(6);
-        return RV.result(ErrorCode.SUCCESS,"");
-    }
+//    @ApiOperation(value = "发送验证码",httpMethod = "POST")
+//    @RequestMapping("/verifycode")
+//    public ResultVO sendVerifyCode(){
+//        String verifyCode=PMUtils.createVerifyCode(6);
+//        return RV.result(ErrorCode.SUCCESS,"");
+//    }
 
     @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body")
     @ApiOperation(value = "搜索用户",httpMethod = "POST")
@@ -127,7 +124,6 @@ public class UserController {
     @ApiOperation(value = "重置密码",httpMethod = "POST")
     @RequestMapping("/reset")
     public ResultVO resetPwd(String newPwd){
-
         return RV.result(ErrorCode.SUCCESS,newPwd);
     }
 

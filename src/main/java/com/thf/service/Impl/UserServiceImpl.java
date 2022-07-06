@@ -22,9 +22,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public User searchUserEmail(String key) {
-        return userDAO.searchUsers(key);
+        return userDAO.searchEmail(key);
+    }
+
+    @Override
+    public User searchUserPhone(String key) {
+        return userDAO.searchPhone(key);
     }
 }
