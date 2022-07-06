@@ -45,13 +45,31 @@
             user_address,
             user_img
         from users
-        where 1=1
-        <if test="email != null and email!=''">
+        where
             email = #{email}
-        </if>
-        <if test="phone != null and phone!=''">
-            phone = #{phone}
-        </if>
-
+<!--        <where>-->
+<!--        <if test="email != null and email!=''">-->
+<!--            email=#{email}-->
+<!--        </if>-->
+<!--        <if test="phone != null and phone!=''">-->
+<!--           and phone=#{phone}-->
+<!--        </if>-->
+<!--        </where>-->
+    </select>
+    <select id="searchPhone" resultType="User">
+        select
+        user_id,
+        user_type,
+        username,
+        password,
+        user_introduce,
+        register_time,
+        phone,
+        email,
+        user_address,
+        user_img
+        from users
+        where
+        phone = #{phone}
     </select>
 </mapper>
