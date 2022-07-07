@@ -32,7 +32,7 @@
 <!--        <result column="user_img" property="userImg"/>-->
 <!--    </resultMap>-->
 
-    <select id="searchUsers" resultType="User">
+    <select id="searchEmail" resultType="User">
         select
             user_id,
             user_type,

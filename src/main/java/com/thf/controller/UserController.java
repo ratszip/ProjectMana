@@ -4,6 +4,7 @@ import com.alibaba.druid.sql.visitor.functions.If;
 import com.thf.common.oo.ErrorCode;
 import com.thf.common.oo.RV;
 import com.thf.common.utils.PMUtils;
+import com.thf.common.utils.RegExpUtils;
 import com.thf.config.MultiRequestBody;
 import com.thf.entity.User;
 import com.thf.common.oo.ResultVO;
@@ -40,23 +41,28 @@ public class UserController {
     @ApiOperation(value = "用户注册",httpMethod = "POST")
     @RequestMapping("/register")
     public ResultVO regist(@ApiIgnore @MultiRequestBody User user, @MultiRequestBody String verifyCode,@MultiRequestBody Integer verifyType){
-        System.out.println("--------------"+user.getEmail()+","+user.getPassword()+","+verifyCode+","+verifyType);
-        String email=user.getEmail();
-        String phone=user.getPhone();
-        String password=user.getPassword();
+        //System.out.println("--------------"+user.getEmail()+","+user.getPassword()+","+verifyCode+","+verifyType);
+        String password=user.getPassword().trim();
         user.setRegisterTime(String.valueOf(System.currentTimeMillis()));
         if(password.trim()==""){
             return new ResultVO<>(2000, "密码不能为空", "");
         }else if(verifyCode.trim()==""){
             return new ResultVO<>(2000, "验证码不能为空", "");
+        }else if(!RegExpUtils.useRegexp(password,"^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")){
+            return new ResultVO<>(2000, "密码必须到8-16位数字或字母", "");
         }
 
         if(verifyType==1){
-            if (email.trim() == "") {
+            String email=user.getEmail().trim();
+            if (email== "") {
                 return new ResultVO<>(2000, "邮箱不能空", "");
+            }else if(!RegExpUtils.useRegexp(email,"^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$")){
+                return new ResultVO<>(2000, "请输入正确的邮箱格式", "");
             }
             user.setPhone("");
             if (userService.searchUserEmail(email) == null) {
+                user.setEmail(email);
+                user.setPassword(password);
                 if (userService.insertUser(user) != null) {
                     return new ResultVO<>(2000, "注册成功", user);
                 } else {
@@ -66,11 +72,16 @@ public class UserController {
                 return new ResultVO<>(2000, "用户已存在，请登录", "");
             }
         }else if(verifyType==2){
-            if (phone.trim() == "") {
+            String phone=user.getPhone().trim();
+            if (phone == "") {
                 return new ResultVO<>(2000, "手机不能空", "");
+            }else if(!RegExpUtils.useRegexp(phone,"[\\+]?[0-9]{6,16}")){
+                return new ResultVO<>(2000, "请输入正确的手机格式", "");
             }
             user.setEmail("");
             if (userService.searchUserPhone(phone) == null) {
+                user.setPhone(phone);
+                user.setPassword(password);
                 if (userService.insertUser(user) != null) {
                     return new ResultVO<>(2000, "注册成功", user);
                 } else {
