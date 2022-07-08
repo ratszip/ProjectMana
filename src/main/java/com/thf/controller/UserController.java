@@ -15,9 +15,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -93,6 +91,22 @@ public class UserController {
         }else
         return new ResultVO<>(2000, "verifyType有误", "");
     }
+
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "string",name = "key", value = "用户登录账号",required = true),
+            @ApiImplicitParam(dataType = "string",name = "password", value = "用户登录密码",required = true),
+            @ApiImplicitParam(dataType = "Integer",name = "type", value = "1邮箱2手机",required = true)
+    })
+    @ApiOperation(value = "用户登录",httpMethod = "POST")
+    @RequestMapping("/login")
+    public ResultVO login( @MultiRequestBody String key, @MultiRequestBody String password,@MultiRequestBody Integer type){
+        System.out.println("--------"+key+"----"+password+"--"+type);
+        ResultVO resultVO = userService.checkLogin(key,password,type);
+        System.out.println(resultVO.getMsg());
+        return resultVO;
+    }
+
 
 
 
