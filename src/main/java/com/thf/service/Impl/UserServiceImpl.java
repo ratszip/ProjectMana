@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         if (type == 1) {
             user =userDAO.searchEmail(key);
             if (userDAO.searchEmail(key) == null) {
-                return new ResultVO<>(2000, "用户不存在", "");
+                return new ResultVO(2000, "用户不存在");
             } else {
                 if (userDAO.searchEmail(key).getPassword().equals(pwd)) {
                     JwtBuilder builder= Jwts.builder();
@@ -64,16 +64,16 @@ public class UserServiceImpl implements UserService {
                             .signWith(key1y)
                             .compact();
 
-                    return new ResultVO<>(2000,"登录成功",token);
+                    return new ResultVO(2000,"登录成功",token);
                 }else {
-                    return new ResultVO<>(2000,"密码错误","");
+                    return new ResultVO(2000,"密码错误");
                 }
 
             }
         }else if(type==2){
             user =userDAO.searchPhone(key);
             if (userDAO.searchPhone(key) == null) {
-                return new ResultVO<>(2000, "用户不存在", "");
+                return new ResultVO(2000, "用户不存在");
             } else {
                 if (userDAO.searchPhone(key).getPassword().equals(pwd)) {
                     JwtBuilder builder= Jwts.builder();
@@ -90,12 +90,12 @@ public class UserServiceImpl implements UserService {
                             .signWith(key1y)
                             .compact();
 
-                    return new ResultVO<>(2000,"登录成功",token);
+                    return new ResultVO(2000,"登录成功",token);
                 }else {
-                    return new ResultVO<>(2000,"密码错误","");
+                    return new ResultVO(2000,"密码错误");
                 }
             }
         }
-        return new ResultVO<>(2000,"type错误","");
+        return new ResultVO(2000,"type错误");
     }
 }

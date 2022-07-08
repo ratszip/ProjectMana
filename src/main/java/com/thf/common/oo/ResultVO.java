@@ -9,27 +9,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResultVO<T> {
+public class ResultVO {
     @ApiModelProperty(value = "状态码")
     private Integer code;
     @ApiModelProperty(value = "说明")
     private String msg;
     @ApiModelProperty(value = "数据")
-    private T data;
+    private Object data;
 
-    public ResultVO(int code, String mesage) {
-        setCode(code);
-        setMsg(mesage);
-    }
-
-    public ResultVO(IErrorCode errorCode, T data) {
-        setCodeMessage(errorCode);
-        setData(data);
-    }
-
-    public ResultVO setCodeMessage(IErrorCode codeMessage) {
-        setCode(codeMessage.getCode());
-        setMsg(codeMessage.getMsg());
-        return this;
+    public ResultVO(Integer code,String msg){
+        this.code=code;
+        this.msg=msg;
     }
 }

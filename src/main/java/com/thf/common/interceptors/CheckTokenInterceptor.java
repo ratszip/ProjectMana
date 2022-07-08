@@ -1,5 +1,6 @@
 package com.thf.common.interceptors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.thf.common.oo.ResultVO;
@@ -19,12 +20,14 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String method = request.getMethod();
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         if("OPTIONS".equalsIgnoreCase(method)){
             return true;
         }
         String token = request.getHeader("token");
         if(token == null){
-            ResultVO resultVO = new ResultVO(4001, "请先登录！", null);
+            ResultVO resultVO = new ResultVO(4001, "请先登录！");
             doResponse(response,resultVO);
         }else{
             try {
@@ -39,13 +42,13 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
 //                Jws<Claims> claimsJws = parser.parseClaimsJws(token);
                 return true;
             }catch (ExpiredJwtException e){
-                ResultVO resultVO = new ResultVO(4002, "登录过期，请重新登录！", null);
+                ResultVO resultVO = new ResultVO(4002, "登录过期，请重新登录！");
                 doResponse(response,resultVO);
             }catch (UnsupportedJwtException e){
-                ResultVO resultVO = new ResultVO(4003, "Token不合法！", null);
+                ResultVO resultVO = new ResultVO(4003, "Token不合法！");
                 doResponse(response,resultVO);
             }catch (Exception e){
-                ResultVO resultVO = new ResultVO(4001, "请先登录！", null);
+                ResultVO resultVO = new ResultVO(4001, "请先登录！");
                 doResponse(response,resultVO);
             }
         }
@@ -56,7 +59,7 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         PrintWriter out = response.getWriter();
-        String s = new ObjectMapper().writeValueAsString(resultVO);
+        String s = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(resultVO);
         out.print(s);
         out.flush();
         out.close();

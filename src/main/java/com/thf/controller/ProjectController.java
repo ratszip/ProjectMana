@@ -1,7 +1,6 @@
 package com.thf.controller;
 
-import com.thf.common.oo.ErrorCode;
-import com.thf.common.oo.RV;
+import com.alibaba.druid.wall.violation.ErrorCode;
 import com.thf.common.oo.ResultVO;
 import com.thf.entity.Project;
 import com.thf.service.ProjectService;
@@ -33,7 +32,7 @@ public class ProjectController {
     @RequestMapping("/create")
     public ResultVO createProject(@ApiIgnore Project project){
 
-        return RV.result(ErrorCode.SUCCESS,project);
+        return null;
     }
 
     @ApiImplicitParams({
@@ -46,7 +45,7 @@ public class ProjectController {
     @RequestMapping("/update")
     public ResultVO updateProject(@ApiIgnore Project project ){
 
-        return RV.result(ErrorCode.SUCCESS,project);
+        return null;
     }
 
     @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body")
@@ -54,6 +53,6 @@ public class ProjectController {
     @RequestMapping("/search")
     public ResultVO searchProject(String key){
 
-        return RV.result(ErrorCode.SUCCESS,key);
+        return null;
     }
 }
