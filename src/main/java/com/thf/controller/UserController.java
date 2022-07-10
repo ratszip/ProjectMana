@@ -1,11 +1,14 @@
 package com.thf.controller;
 
-import com.alibaba.druid.wall.violation.ErrorCode;
+import com.thf.common.interceptors.CheckTokenInterceptor;
 import com.thf.common.utils.RegExpUtils;
 import com.thf.config.MultiRequestBody;
 import com.thf.entity.User;
 import com.thf.common.oo.ResultVO;
 import com.thf.service.UserService;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.crypto.SecretKey;
 
 
 @Controller
@@ -58,7 +62,7 @@ public class UserController {
                 user.setEmail(email);
                 user.setPassword(password);
                 if (userService.insertUser(user) != null) {
-                    return new ResultVO(2000, "注册成功", user);
+                    return new ResultVO(2000, "注册成功",null);
                 } else {
                     return new ResultVO(2000, "注册失败", null);
                 }
@@ -77,7 +81,7 @@ public class UserController {
                 user.setPhone(phone);
                 user.setPassword(password);
                 if (userService.insertUser(user) != null) {
-                    return new ResultVO(2000, "注册成功", user);
+                    return new ResultVO(2000, "注册成功", null);
                 } else {
                     return new ResultVO(2000, "注册失败", null);
                 }
@@ -134,11 +138,17 @@ public class UserController {
         return null;
     }
 
+    @ApiImplicitParam(name="token",value ="token",dataType = "String",paramType = "body")
     @ApiOperation(value = "获取用户信息",httpMethod = "POST")
     @RequestMapping("/info")
-    public ResultVO userInfo(){
-
-        return null;
+    public ResultVO userInfo(@RequestHeader String token){
+        JwtParser parser = Jwts.parser();
+        parser.setSigningKey("PMproject6qweqwewqeqwePMproject6qweqwewqeqwe123"); //解析token的SigningKey必须和生成token时设置密码一致
+        //如果token正确（密码正确，有效期内）则正常执行，否则抛出异常
+        Jws<Claims> claimsJws = parser.parseClaimsJws(token);
+        Integer id= (Integer) claimsJws.getBody().get("id");
+        ResultVO resultVO= userService.searchById(id);
+        return resultVO;
     }
 
     @ApiImplicitParam(name="newPwd",value ="新密码",dataType = "String",paramType = "body")
