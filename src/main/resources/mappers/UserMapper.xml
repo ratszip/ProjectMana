@@ -19,57 +19,47 @@
         #{password},#{registerTime})
     </insert>
 
-<!--    <resultMap type="User" id="userMap">-->
-<!--        <id column="user_id" property="userId"/>-->
-<!--        <result column="user_type" property="userType"/>-->
-<!--        <result column="username" property="username"/>-->
-<!--        <result column="password" property="password"/>-->
-<!--        <result column="user_introduce" property="userIntroduce"/>-->
-<!--        <result column="register_time" property="registerTime"/>-->
-<!--        <result column="phone" property="phone"/>-->
-<!--        <result column="email" property="email"/>-->
-<!--        <result column="user_address" property="userAddress"/>-->
-<!--        <result column="user_img" property="userImg"/>-->
-<!--    </resultMap>-->
+        <resultMap type="User" id="userMap">
+            <id column="user_id" property="userId"/>
+            <result column="user_type" property="userType"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="user_introduce" property="userIntroduce"/>
+            <result column="register_time" property="registerTime"/>
+            <result column="phone" property="phone"/>
+            <result column="email" property="email"/>
+            <result column="user_address" property="userAddress"/>
+            <result column="user_img" property="userImg"/>
+        </resultMap>
 
-    <select id="searchEmail" resultType="User">
+    <select id="searchEmail" resultMap="userMap">
         select
-            user_id,
-            user_type,
-            username,
-            password,
-            user_introduce,
-            register_time,
-            phone,
-            email,
-            user_address,
-            user_img
+        *
         from users
         where
-            email = #{email}
-<!--        <where>-->
-<!--        <if test="email != null and email!=''">-->
-<!--            email=#{email}-->
-<!--        </if>-->
-<!--        <if test="phone != null and phone!=''">-->
-<!--           and phone=#{phone}-->
-<!--        </if>-->
-<!--        </where>-->
+        email = #{email}
+        <!--        <where>-->
+        <!--        <if test="email != null and email!=''">-->
+        <!--            email=#{email}-->
+        <!--        </if>-->
+        <!--        <if test="phone != null and phone!=''">-->
+        <!--           and phone=#{phone}-->
+        <!--        </if>-->
+        <!--        </where>-->
     </select>
-    <select id="searchPhone" resultType="User">
+    <select id="searchPhone" resultMap="userMap">
         select
-        user_id,
-        user_type,
-        username,
-        password,
-        user_introduce,
-        register_time,
-        phone,
-        email,
-        user_address,
-        user_img
+        *
         from users
         where
         phone = #{phone}
+    </select>
+
+    <select id="searchById" resultMap="userMap">
+        select
+        *
+        from users
+        where
+        user_id = #{userId}
     </select>
 </mapper>

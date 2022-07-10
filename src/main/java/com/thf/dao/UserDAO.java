@@ -8,4 +8,5 @@ public interface UserDAO {
     public User searchEmail(String key);
     public User searchPhone(String key);
     public int updateUsers(User user);
+    public User searchById(Integer id);
 }
