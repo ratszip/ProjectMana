@@ -55,6 +55,16 @@
         phone = #{phone}
     </select>
 
+    <update id="updateUsers">
+        update users
+        set
+        username = #{username},
+        user_introduce = #{userIntroduce},
+        user_address = #{userAddress}
+        where
+        user_id = #{userId}
+    </update>
+
     <select id="searchById" resultMap="userMap">
         select
         *

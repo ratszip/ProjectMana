@@ -43,6 +43,7 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
                 return true;
             }catch (ExpiredJwtException e){
 //                claims =e.getClaims();
+                long tm=System.currentTimeMillis();
                 ResultVO resultVO = new ResultVO(4002, "登录过期，请重新登录！");
                 doResponse(response,resultVO);
             }catch (UnsupportedJwtException e){

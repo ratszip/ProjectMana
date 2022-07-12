@@ -1,14 +1,9 @@
 package com.thf.controller;
 
-import com.thf.common.interceptors.CheckTokenInterceptor;
-import com.thf.common.utils.RegExpUtils;
+
 import com.thf.config.MultiRequestBody;
-import com.thf.entity.User;
 import com.thf.common.oo.ResultVO;
 import com.thf.service.UserService;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-import javax.crypto.SecretKey;
 
 
 @Controller
@@ -29,128 +23,121 @@ public class UserController {
     @Resource
     private UserService userService;
 
+
+    /**
+     * 注册接口
+     *
+     * @param phone
+     * @param email
+     * @param phone
+     * @param verifyCode
+     * @param verifyType
+     * @return
+     */
     @ApiImplicitParams({
-            @ApiImplicitParam(name="userPhone",value ="手机号",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="userEmail",value ="邮箱和手机号必填一个",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name = "userPwd",value ="密码",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name = "verifyCode",value ="验证码",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name = "verifyType",value ="1.邮箱2手机",required = true,dataType = "Integer",paramType = "body")
+            @ApiImplicitParam(name = "phone", value = "手机号", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "email", value = "邮箱和手机号必填一个", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "verifyCode", value = "验证码", required = true, dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "verifyType", value = "1.邮箱2手机", required = true, dataType = "Integer", paramType = "body")
     })
-    @ApiOperation(value = "用户注册",httpMethod = "POST")
+    @ApiOperation(value = "用户注册", httpMethod = "POST")
     @RequestMapping("/register")
-    public ResultVO regist(@ApiIgnore @MultiRequestBody User user, @MultiRequestBody String verifyCode,@MultiRequestBody Integer verifyType){
-        //System.out.println("--------------"+user.getEmail()+","+user.getPassword()+","+verifyCode+","+verifyType);
-        String password=user.getPassword().trim();
-        user.setRegisterTime(String.valueOf(System.currentTimeMillis()));
-        if(password.trim()==""){
-            return new ResultVO(2000, "密码不能为空", null);
-        }else if(verifyCode.trim()==""){
-            return new ResultVO(2000, "验证码不能为空", "");
-        }else if(!RegExpUtils.useRegexp(password,"^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")){
-            return new ResultVO(2000, "密码必须到8-16位数字或字母", null);
-        }
-
-        if(verifyType==1){
-            String email=user.getEmail().trim();
-            if (email== "") {
-                return new ResultVO(2000, "邮箱不能空", "");
-            }else if(!RegExpUtils.useRegexp(email,"^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$")){
-                return new ResultVO(2000, "请输入正确的邮箱格式", null);
-            }
-            user.setPhone("");
-            if (userService.searchUserEmail(email) == null) {
-                user.setEmail(email);
-                user.setPassword(password);
-                if (userService.insertUser(user) != null) {
-                    return new ResultVO(2000, "注册成功",null);
-                } else {
-                    return new ResultVO(2000, "注册失败", null);
-                }
-            } else {
-                return new ResultVO(2000, "用户已存在，请登录", null);
-            }
-        }else if(verifyType==2){
-            String phone=user.getPhone().trim();
-            if (phone == "") {
-                return new ResultVO(2000, "手机不能空", null);
-            }else if(!RegExpUtils.useRegexp(phone,"[\\+]?[0-9]{6,16}")){
-                return new ResultVO(2000, "请输入正确的手机格式", null);
-            }
-            user.setEmail("");
-            if (userService.searchUserPhone(phone) == null) {
-                user.setPhone(phone);
-                user.setPassword(password);
-                if (userService.insertUser(user) != null) {
-                    return new ResultVO(2000, "注册成功", null);
-                } else {
-                    return new ResultVO(2000, "注册失败", null);
-                }
-            } else {
-                return new ResultVO(2000, "用户已存在，请登录", null);
-            }
-        }else
-        return new ResultVO(2000, "verifyType有误", null);
-    }
-
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "string",name = "key", value = "用户登录账号",required = true),
-            @ApiImplicitParam(dataType = "string",name = "password", value = "用户登录密码",required = true),
-            @ApiImplicitParam(dataType = "Integer",name = "type", value = "1邮箱2手机",required = true)
-    })
-    @ApiOperation(value = "用户登录",httpMethod = "POST")
-    @RequestMapping("/login")
-    public ResultVO login( @MultiRequestBody String key, @MultiRequestBody String password,@MultiRequestBody Integer type){
-//        System.out.println("--------"+key+"----"+password+"--"+type);
-        ResultVO resultVO = userService.checkLogin(key,password,type);
-//        System.out.println(resultVO.getMsg());
+    public ResultVO regist(@MultiRequestBody String phone,
+                           @MultiRequestBody String email,
+                           @MultiRequestBody String password,
+                           @MultiRequestBody String verifyCode,
+                           @MultiRequestBody Integer verifyType) {
+        ResultVO resultVO = userService.userRegister(phone, email, password, verifyCode, verifyType);
         return resultVO;
     }
 
 
-
-
+    /**
+     * 登录接口
+     *
+     * @param key
+     * @param password
+     * @param type
+     * @return
+     */
     @ApiImplicitParams({
-            @ApiImplicitParam(name="userName",value ="用户名",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="userEmail",value ="邮箱",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="userIntroduce",value ="简介",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="userAddress",value ="地址",dataType = "String",paramType = "body")
+            @ApiImplicitParam(dataType = "string", name = "key", value = "用户登录账号", required = true),
+            @ApiImplicitParam(dataType = "string", name = "password", value = "用户登录密码", required = true),
+            @ApiImplicitParam(dataType = "Integer", name = "type", value = "1邮箱2手机", required = true)
     })
-    @ApiOperation(value = "修改个人资料",httpMethod = "POST")
-    @RequestMapping("/update")
-    public ResultVO update(@ApiIgnore User user){
-
-        return null;
+    @ApiOperation(value = "用户登录", httpMethod = "POST")
+    @RequestMapping("/login")
+    public ResultVO login(@MultiRequestBody String key, @MultiRequestBody String password, @MultiRequestBody Integer type) {
+        ResultVO resultVO = userService.checkLogin(key, password, type);
+        return resultVO;
     }
 
+
+    /**
+     * 修改个人信息
+     *
+     * @param username
+     * @param userIntroduce
+     * @param userAddress
+     * @return
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "userIntroduce", value = "简介", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "userAddress", value = "地址", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header",required = true)
+    })
+    @ApiOperation(value = "修改个人资料", httpMethod = "POST")
+    @RequestMapping("/update")
+    public ResultVO update(@MultiRequestBody String username,
+                            @MultiRequestBody String userIntroduce,
+                            @MultiRequestBody String userAddress,
+                           @RequestHeader String token) {
+
+        ResultVO resultVO=userService.updateInfo(username,userIntroduce,userAddress,token);
+        return resultVO;
+    }
+
+
+    /**
+     * 发送验证码接口
+     * @param type
+     * @return ResultVO
+     */
+//    @ApiImplicitParam(name="type",value ="1邮箱2手机",dataType = "Integer",paramType = "body")
 //    @ApiOperation(value = "发送验证码",httpMethod = "POST")
 //    @RequestMapping("/verifycode")
-//    public ResultVO sendVerifyCode(){
+//    public ResultVO sendVerifyCode(int type){
 //        String verifyCode=PMUtils.createVerifyCode(6);
 //        return RV.result(ErrorCode.SUCCESS,"");
 //    }
 
-    @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body")
+    /**
+     * 搜索用户接口
+     * @param key
+     * @return
+     */
+    @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body",required = true)
     @ApiOperation(value = "搜索用户",httpMethod = "POST")
-    @RequestMapping("/search")
+    @RequestMapping("/search/user")
     public ResultVO search(String key){
 
         return null;
     }
 
-    @ApiImplicitParam(name="token",value ="token",dataType = "String",paramType = "body")
+    @ApiImplicitParam(name="token",value ="token",dataType = "String",paramType ="header",required = true)
     @ApiOperation(value = "获取用户信息",httpMethod = "POST")
     @RequestMapping("/info")
     public ResultVO userInfo(@RequestHeader String token){
-        JwtParser parser = Jwts.parser();
-        parser.setSigningKey("PMproject6qweqwewqeqwePMproject6qweqwewqeqwe123"); //解析token的SigningKey必须和生成token时设置密码一致
-        //如果token正确（密码正确，有效期内）则正常执行，否则抛出异常
-        Jws<Claims> claimsJws = parser.parseClaimsJws(token);
-        Integer id= (Integer) claimsJws.getBody().get("id");
-        ResultVO resultVO= userService.searchById(id);
-        return resultVO;
+        return userService.getInfo(token);
     }
 
+    /**
+     * 重置密码接口
+     * @param newPwd
+     * @return
+     */
     @ApiImplicitParam(name="newPwd",value ="新密码",dataType = "String",paramType = "body")
     @ApiOperation(value = "重置密码",httpMethod = "POST")
     @RequestMapping("/reset")
@@ -158,16 +145,20 @@ public class UserController {
         return null;
     }
 
+    /**
+     * 修改手机和邮箱接口
+     * @param type
+     * @param newContact
+     * @return
+     */
     @ApiImplicitParams({
             @ApiImplicitParam(name="newContact",value ="新的手机或邮箱",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="type",value ="1是手机2是邮箱",dataType = "int",paramType = "body")
     })
     @ApiOperation(value = "修改邮箱或手机",httpMethod = "POST")
-    @RequestMapping("/resetcontact")
+    @RequestMapping("/reset/contact")
     public ResultVO resetContact(int type,String newContact){
 
         return null;
     }
-
-
 }
