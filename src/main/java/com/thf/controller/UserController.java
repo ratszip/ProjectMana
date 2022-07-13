@@ -1,6 +1,8 @@
 package com.thf.controller;
 
-
+import com.thf.common.GloableVar;
+import com.thf.common.utils.PMUtils;
+import com.thf.common.utils.RegExpUtils;
 import com.thf.config.MultiRequestBody;
 import com.thf.common.oo.ResultVO;
 import com.thf.service.UserService;
@@ -8,20 +10,27 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/users")
 @ResponseBody
-@Api(value = "用户管理",tags = "用户管理模块")
+@Api(value = "用户管理", tags = "用户管理模块")
 public class UserController {
     @Resource
     private UserService userService;
+    @Autowired
+    JavaMailSender mailSender;
 
 
     /**
@@ -43,11 +52,20 @@ public class UserController {
     })
     @ApiOperation(value = "用户注册", httpMethod = "POST")
     @RequestMapping("/register")
-    public ResultVO regist(@MultiRequestBody String phone,
+    public ResultVO regist(HttpServletRequest request,
+                           @MultiRequestBody String phone,
                            @MultiRequestBody String email,
                            @MultiRequestBody String password,
                            @MultiRequestBody String verifyCode,
                            @MultiRequestBody Integer verifyType) {
+        HttpSession session=request.getSession();
+        String code= (String) session.getAttribute(email);
+        if(session.getAttribute(email)==null){
+            return new ResultVO(2000,"请重新发送验证码");
+        }
+        if(!code.equals(verifyCode)){
+            return new ResultVO(2000,"验证码错误");
+        }
         ResultVO resultVO = userService.userRegister(phone, email, password, verifyCode, verifyType);
         return resultVO;
     }
@@ -86,78 +104,107 @@ public class UserController {
             @ApiImplicitParam(name = "username", value = "用户名", dataType = "String", paramType = "body"),
             @ApiImplicitParam(name = "userIntroduce", value = "简介", dataType = "String", paramType = "body"),
             @ApiImplicitParam(name = "userAddress", value = "地址", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header",required = true)
+            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true)
     })
     @ApiOperation(value = "修改个人资料", httpMethod = "POST")
     @RequestMapping("/update")
     public ResultVO update(@MultiRequestBody String username,
-                            @MultiRequestBody String userIntroduce,
-                            @MultiRequestBody String userAddress,
+                           @MultiRequestBody String userIntroduce,
+                           @MultiRequestBody String userAddress,
                            @RequestHeader String token) {
 
-        ResultVO resultVO=userService.updateInfo(username,userIntroduce,userAddress,token);
+        ResultVO resultVO = userService.updateInfo(username, userIntroduce, userAddress, token);
         return resultVO;
     }
 
 
     /**
      * 发送验证码接口
+     *
      * @param type
      * @return ResultVO
      */
-//    @ApiImplicitParam(name="type",value ="1邮箱2手机",dataType = "Integer",paramType = "body")
-//    @ApiOperation(value = "发送验证码",httpMethod = "POST")
-//    @RequestMapping("/verifycode")
-//    public ResultVO sendVerifyCode(int type){
-//        String verifyCode=PMUtils.createVerifyCode(6);
-//        return RV.result(ErrorCode.SUCCESS,"");
-//    }
+    @ApiImplicitParam(name = "type", value = "1邮箱2手机", dataType = "Integer", paramType = "body")
+    @ApiOperation(value = "发送验证码", httpMethod = "POST")
+    @RequestMapping("/verifycode")
+    public ResultVO sendVerifyCode(HttpServletRequest request,
+                                   @MultiRequestBody int type,
+                                   @MultiRequestBody String email) {
+        String verifyCode = PMUtils.createVerifyCode(6);
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(email, verifyCode);
+        httpSession.setMaxInactiveInterval(GloableVar.codeExTime);
+        try {
+            if (RegExpUtils.useRegexp(email.trim(), GloableVar.emailReg)) {
+                if (userService.searchUserEmail(email) == null) {
+//                    PMUtils.sendMail(email, "PMAPP验证码");
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setSubject("PMAPP验证码");
+                    message.setText("code：" + verifyCode);
+                    message.setTo(email);
+                    message.setFrom("351659704@qq.com");
+                    mailSender.send(message);
+                    return new ResultVO(2000, "验证码发送成功", null);
+                } else {
+                    return new ResultVO(2000, "邮箱已注册", null);
+                }
+            } else {
+                return new ResultVO(2000, "邮箱格式错误", null);
+            }
+        } catch (MailException e) {
+            return new ResultVO(2000, "验证码发送失败", null);
+        }
+    }
+
 
     /**
      * 搜索用户接口
+     *
      * @param key
      * @return
      */
-    @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body",required = true)
-    @ApiOperation(value = "搜索用户",httpMethod = "POST")
+    @ApiImplicitParam(name = "key", value = "搜索内容", dataType = "String", paramType = "body", required = true)
+    @ApiOperation(value = "搜索用户", httpMethod = "POST")
     @RequestMapping("/search/user")
-    public ResultVO search(String key){
+    public ResultVO search(String key) {
 
         return null;
     }
 
-    @ApiImplicitParam(name="token",value ="token",dataType = "String",paramType ="header",required = true)
-    @ApiOperation(value = "获取用户信息",httpMethod = "POST")
+    @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true)
+    @ApiOperation(value = "获取用户信息", httpMethod = "POST")
     @RequestMapping("/info")
-    public ResultVO userInfo(@RequestHeader String token){
+    public ResultVO userInfo(@RequestHeader String token) {
         return userService.getInfo(token);
     }
 
     /**
      * 重置密码接口
+     *
      * @param newPwd
      * @return
      */
-    @ApiImplicitParam(name="newPwd",value ="新密码",dataType = "String",paramType = "body")
-    @ApiOperation(value = "重置密码",httpMethod = "POST")
+    @ApiImplicitParam(name = "newPwd", value = "新密码", dataType = "String", paramType = "body")
+    @ApiOperation(value = "重置密码", httpMethod = "POST")
     @RequestMapping("/reset")
-    public ResultVO resetPwd(String newPwd){
+    public ResultVO resetPwd(String newPwd) {
         return null;
     }
 
     /**
      * 修改手机和邮箱接口
+     *
      * @param type
      * @param newContact
      * @return
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(name="newContact",value ="新的手机或邮箱",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="type",value ="1是手机2是邮箱",dataType = "int",paramType = "body")
+            @ApiImplicitParam(name = "newContact", value = "新的手机或邮箱", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "type", value = "1是手机2是邮箱", dataType = "int", paramType = "body")
     })
-    @ApiOperation(value = "修改邮箱或手机",httpMethod = "POST")
+    @ApiOperation(value = "修改邮箱或手机", httpMethod = "POST")
     @RequestMapping("/reset/contact")
-    public ResultVO resetContact(int type,String newContact){
+    public ResultVO resetContact(int type, String newContact) {
 
         return null;
     }

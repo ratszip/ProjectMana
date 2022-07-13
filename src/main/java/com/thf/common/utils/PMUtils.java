@@ -1,5 +1,12 @@
 package com.thf.common.utils;
 
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import javax.annotation.Resource;
 import java.util.Random;
 
 public class PMUtils {
@@ -14,7 +21,6 @@ public class PMUtils {
             int ran1 = r.nextInt(10);
             sb.append(String.valueOf(ran1));
         }
-//        System.out.println(sb);
         return sb.toString();
     }
 
