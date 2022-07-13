@@ -6,17 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thf.common.GloableVar;
 import com.thf.common.oo.ResultVO;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.Key;
 
 @Component
 public class CheckTokenInterceptor implements HandlerInterceptor {
@@ -34,7 +30,6 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
             ResultVO resultVO = new ResultVO(4001, "请先登录！");
             doResponse(response,resultVO);
         }else{
-
             try {
                 JwtParser parser = Jwts.parser();
                 parser.setSigningKey(GloableVar.secretKey); //解析token的SigningKey必须和生成token时设置密码一致

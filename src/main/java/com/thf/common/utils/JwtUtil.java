@@ -2,7 +2,6 @@ package com.thf.common.utils;
 
 import com.thf.common.GloableVar;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 
