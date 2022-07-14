@@ -8,7 +8,7 @@ public interface UserService {
     User searchUserEmail(String key);
     User searchUserPhone(String key);
     //根据id查询用户信息
-    User searchById(Integer id);
+    User searchById(int id);
     //用户登录
     ResultVO checkLogin(String name, String pwd,int type);
     //用户注册
@@ -17,4 +17,6 @@ public interface UserService {
     ResultVO updateInfo(String userName, String userIntroduce, String userAddress,String token);
     //获取用户信息
     ResultVO getInfo(String token);
+    //重置密码
+    ResultVO resetPwd(String password,String token);
 }

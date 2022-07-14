@@ -12,5 +12,5 @@ public class GloableVar {
     //过期时长-毫秒
     public static long expireTime=7*24*60*60*1000;
     //验证码失效时间
-    public static int codeExTime=1*60;
+    public static int codeExTime=5*60;
 }

@@ -1,10 +1,12 @@
 package com.thf.controller;
 
 import com.thf.common.GloableVar;
+import com.thf.common.utils.JwtUtil;
 import com.thf.common.utils.PMUtils;
 import com.thf.common.utils.RegExpUtils;
 import com.thf.config.MultiRequestBody;
 import com.thf.common.oo.ResultVO;
+import com.thf.entity.User;
 import com.thf.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
 
 @Controller
 @RequestMapping("/users")
@@ -55,16 +58,16 @@ public class UserController {
     public ResultVO regist(HttpServletRequest request,
                            @MultiRequestBody String phone,
                            @MultiRequestBody String email,
-                           @MultiRequestBody String password,
-                           @MultiRequestBody String verifyCode,
-                           @MultiRequestBody Integer verifyType) {
-        HttpSession session=request.getSession();
-        String code= (String) session.getAttribute(email);
-        if(session.getAttribute(email)==null){
-            return new ResultVO(2000,"请重新发送验证码");
+                           @MultiRequestBody @NotNull String password,
+                           @MultiRequestBody @NotNull String verifyCode,
+                           @MultiRequestBody @NotNull Integer verifyType) {
+        HttpSession session = request.getSession();
+        String code = (String) session.getAttribute(email);
+        if (session.getAttribute(email) == null) {
+            return new ResultVO(2000, "请重新发送验证码");
         }
-        if(!code.equals(verifyCode)){
-            return new ResultVO(2000,"验证码错误");
+        if (!code.equals(verifyCode)) {
+            return new ResultVO(2000, "验证码错误");
         }
         ResultVO resultVO = userService.userRegister(phone, email, password, verifyCode, verifyType);
         return resultVO;
@@ -86,7 +89,9 @@ public class UserController {
     })
     @ApiOperation(value = "用户登录", httpMethod = "POST")
     @RequestMapping("/login")
-    public ResultVO login(@MultiRequestBody String key, @MultiRequestBody String password, @MultiRequestBody Integer type) {
+    public ResultVO login(@MultiRequestBody @NotNull String key,
+                          @MultiRequestBody @NotNull String password,
+                          @MultiRequestBody @NotNull Integer type) {
         ResultVO resultVO = userService.checkLogin(key, password, type);
         return resultVO;
     }
@@ -124,12 +129,15 @@ public class UserController {
      * @param type
      * @return ResultVO
      */
-    @ApiImplicitParam(name = "type", value = "1邮箱2手机", dataType = "Integer", paramType = "body")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "1邮箱2手机", dataType = "Integer", paramType = "body"),
+            @ApiImplicitParam(name = "key", value = "手机或邮箱", dataType = "String", paramType = "body")
+    })
     @ApiOperation(value = "发送验证码", httpMethod = "POST")
     @RequestMapping("/verifycode")
     public ResultVO sendVerifyCode(HttpServletRequest request,
-                                   @MultiRequestBody int type,
-                                   @MultiRequestBody String email) {
+                                   @MultiRequestBody @NotNull int type,
+                                   @MultiRequestBody @NotNull String email) {
         String verifyCode = PMUtils.createVerifyCode(6);
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute(email, verifyCode);
@@ -160,15 +168,18 @@ public class UserController {
     /**
      * 搜索用户接口
      *
-     * @param key
+     * @param id
      * @return
      */
-    @ApiImplicitParam(name = "key", value = "搜索内容", dataType = "String", paramType = "body", required = true)
-    @ApiOperation(value = "搜索用户", httpMethod = "POST")
-    @RequestMapping("/search/user")
-    public ResultVO search(String key) {
-
-        return null;
+    @ApiImplicitParam(name = "id", value = "id", dataType = "Integer", paramType = "body", required = true)
+    @ApiOperation(value = "根据id搜索用户", httpMethod = "POST")
+    @RequestMapping("/search")
+    public ResultVO search(@MultiRequestBody Integer id) {
+        User user = userService.searchById(id);
+        if (user == null) {
+            return new ResultVO(2000, "没有该用户");
+        }
+        return new ResultVO(2000, "搜索成功", user);
     }
 
     @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true)
@@ -181,14 +192,18 @@ public class UserController {
     /**
      * 重置密码接口
      *
-     * @param newPwd
+     * @param password
      * @return
      */
-    @ApiImplicitParam(name = "newPwd", value = "新密码", dataType = "String", paramType = "body")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "password", value = "新密码", dataType = "String", paramType = "body")})
     @ApiOperation(value = "重置密码", httpMethod = "POST")
-    @RequestMapping("/reset")
-    public ResultVO resetPwd(String newPwd) {
-        return null;
+    @RequestMapping("/reset/password")
+    public ResultVO resetPwd(@MultiRequestBody String password,
+                             @RequestHeader String token) {
+        ResultVO resultVO = userService.resetPwd(password, token);
+        return resultVO;
     }
 
     /**
@@ -200,7 +215,7 @@ public class UserController {
      */
     @ApiImplicitParams({
             @ApiImplicitParam(name = "newContact", value = "新的手机或邮箱", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "type", value = "1是手机2是邮箱", dataType = "int", paramType = "body")
+            @ApiImplicitParam(name = "type", value = "1是邮箱2是手机", dataType = "int", paramType = "body")
     })
     @ApiOperation(value = "修改邮箱或手机", httpMethod = "POST")
     @RequestMapping("/reset/contact")
