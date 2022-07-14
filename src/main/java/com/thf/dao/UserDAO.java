@@ -8,5 +8,6 @@ public interface UserDAO {
     public User searchEmail(String email);
     public User searchPhone(String phone);
     public int updateUsers(User user);
-    public User searchById(Integer userId);
+    public User searchById(int userId);
+    public int resetPassword(User user);
 }

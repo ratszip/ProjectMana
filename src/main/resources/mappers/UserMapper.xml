@@ -64,6 +64,12 @@
         where
         user_id = #{userId}
     </update>
+    <update id="resetPassword">
+        UPDATE users
+        SET password=#{password}
+        WHERE
+        user_id=#{userId};
+    </update>
 
     <select id="searchById" resultMap="userMap">
         select
