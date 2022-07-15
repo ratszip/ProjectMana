@@ -15,11 +15,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(checkTokenInterceptor)
-                .addPathPatterns("/shopcart/**")
+//                .addPathPatterns("/shopcart/**")
                 .addPathPatterns("/orders/**")
-                .addPathPatterns("/users/reset/*")
+                .addPathPatterns("/users/reset/**")
                 .addPathPatterns("/users/update")
-                .addPathPatterns("/users/info");
+                .addPathPatterns("/users/info")
+                .addPathPatterns("/project/**");
                // .excludePathPatterns("/users/**");
     }
 }

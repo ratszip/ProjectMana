@@ -9,11 +9,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/project")
@@ -26,20 +29,22 @@ public class ProjectController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",value ="项目名",required = true,dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="describe",value ="描述",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="relateUser",value ="关联人",dataType = "int",paramType = "body")
+            @ApiImplicitParam(name="relateUser",value ="关联人",dataType = "int",paramType = "body"),
+            @ApiImplicitParam(name="startTime",value ="开始时间",dataType = "int",paramType = "body"),
+            @ApiImplicitParam(name="endTime",value ="结束时间",dataType = "int",paramType = "body")
     })
     @ApiOperation(value = "创建项目",httpMethod = "POST")
     @RequestMapping("/create")
-    public ResultVO createProject(@ApiIgnore Project project){
-
-        return null;
+    public ResultVO createProject(@RequestHeader String token, @ApiIgnore @RequestBody Project project){
+       ResultVO resultVO= projectService.createProject(token,project);
+        return resultVO;
     }
 
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",value ="项目名",required = true,dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="describe",value ="描述",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="relateUser",value ="关联人",dataType = "int",paramType = "body"),
-            @ApiImplicitParam(name="projectStatus",value ="项目进度",dataType = "int",paramType = "body")
+            @ApiImplicitParam(name="projectStatus",value ="项目状态",dataType = "int",paramType = "body")
     })
     @ApiOperation(value = "修改项目",httpMethod = "POST")
     @RequestMapping("/update")
