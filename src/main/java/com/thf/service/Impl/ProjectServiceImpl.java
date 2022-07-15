@@ -1,5 +1,8 @@
 package com.thf.service.Impl;
 
+import com.thf.common.oo.ResultVO;
+import com.thf.common.utils.JwtUtil;
+import com.thf.common.utils.PMUtils;
 import com.thf.dao.ProjectDAO;
 import com.thf.entity.Project;
 import com.thf.service.ProjectService;
@@ -13,8 +16,15 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectDAO projectDAO;
 
     @Override
-    public int insertProject(Project project) {
-        return 0;
+    public ResultVO createProject(String token,Project project) {
+        Integer id= (Integer) JwtUtil.parseToken(token).get("id");
+        project.setCreateUser(id);
+        project.setCreateTime(System.currentTimeMillis());
+        if(projectDAO.insertProject(project)>0){
+            return new ResultVO(2000,"创建成功",project);
+        }
+
+        return null;
     }
 
     @Override

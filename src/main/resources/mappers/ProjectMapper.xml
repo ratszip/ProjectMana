@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.thf.dao.AdminDAO">
+<mapper namespace="com.thf.dao.ProjectDAO">
+    <insert id="insertProject" useGeneratedKeys="true" keyProperty="projectId">
+        insert into project(
+        <if test="describe != null and describe != ''">
+            `describe`,
+        </if>
+        <if test="relateUser != null and relateUser != ''">
+            relate_user,
+        </if>
+        <if test="startTime != null and startTime != ''">
+            start_time,
+        </if>
+        <if test="endTime != null and endTime != ''">
+            end_time,
+        </if>
+        create_user,create_time,project_name) values(
+        #{describe},
+        <if test="relateUser != null and relateUser != ''">
+            #{relateUser},
+        </if>
+        <if test="startTime != null and startTime != ''">
+            #{startTime},
+        </if>
+        <if test="endTime != null and endTime != ''">
+            #{endTime},
+        </if>
+        #{createUser},#{createTime},#{projectName})
+    </insert>
+    <resultMap type="Project" id="projectMap">
+        <id column="project_id" property="projectId"/>
+        <id column="project_name" property="projectName"/>
+        <id column="describe" property="describe"/>
+        <id column="project_status" property="projectStatus"/>
+        <id column="create_user" property="createUser"/>
+        <id column="create_time" property="createTime"/>
+        <id column="relate_user" property="relateUser"/>
+        <id column="start_time" property="startTime"/>
+        <id column="end_time" property="endTime"/>
+        <id column="progress" property="progress"/>
+    </resultMap>
 
 </mapper>
