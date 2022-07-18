@@ -40,5 +40,38 @@
         <id column="end_time" property="endTime"/>
         <id column="progress" property="progress"/>
     </resultMap>
+    <update id="updateProject">
+        update project
+        <set>
+            <if test="projectName != null and projectName != ''">
+                project_name=#{projectName},
+            </if>
+            <if test="describe != null and describe != ''">
+                `describe`=#{describe},
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                project_status=#{projectStatus},
+            </if>
+            <if test="relateUser != null and relateUser != ''">
+                relate_user=#{relateUser},
+            </if>
+            <if test="startTime != null and startTime != ''">
+                start_time=#{startTime},
+            </if>
+            <if test="endTime != null and endTime != ''">
+                end_time=#{endTime},
+            </if>
+            <if test="progress != null and progress != ''">
+                progress=#{progress}
+            </if>
+        </set>
+        where project_id =#{projectId}
+    </update>
 
+    <select id="searchById" resultMap="projectMap">
+        select
+        *
+        from project
+        where project_id=#{projectId}
+    </select>
 </mapper>
