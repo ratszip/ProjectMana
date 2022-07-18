@@ -24,16 +24,35 @@ public class ProjectServiceImpl implements ProjectService {
             return new ResultVO(2000,"创建成功",project);
         }
 
+        return new ResultVO(5000,"创建失败",null);
+    }
+
+    @Override
+    public ResultVO updateProject(String token, Project project) {
+//        Integer id= (Integer) JwtUtil.parseToken(token).get("id");
+       int pid= project.getProjectId();
+       if(projectDAO.searchProject(pid)!=null){
+           if(projectDAO.updateProject(project)>0){
+               Project pro= projectDAO.searchProject(pid);
+               return new ResultVO(2000,"更新资料成功",pro);
+           }
+           return new ResultVO(5000,"更新失败");
+       }
         return null;
     }
 
     @Override
-    public int updateProject(Project project) {
-        return 0;
+    public ResultVO searchById(int id) {
+        Project project=projectDAO.searchProject(id);
+        if(project!=null){
+            return new ResultVO(2000,"搜索成功",project);
+        }
+        return new ResultVO(5000,"没有数据");
     }
 
     @Override
-    public Project searchProject(Project project) {
+    public ResultVO deleteProject(String token, Project project) {
+        Integer id= (Integer) JwtUtil.parseToken(token).get("id");
         return null;
     }
 }
