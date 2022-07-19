@@ -2,6 +2,7 @@ package com.thf.controller;
 
 import com.alibaba.druid.wall.violation.ErrorCode;
 import com.thf.common.oo.ResultVO;
+import com.thf.config.MultiRequestBody;
 import com.thf.entity.Project;
 import com.thf.service.ProjectService;
 import io.swagger.annotations.Api;
@@ -53,10 +54,10 @@ public class ProjectController {
         return projectService.updateProject(token,project);
     }
 
-    @ApiImplicitParam(name="id",value ="搜索内容",dataType = "String",paramType = "body")
+    @ApiImplicitParam(name="id",value ="搜索内容",dataType = "Integer",paramType = "body")
     @ApiOperation(value = "搜索项目",httpMethod = "POST")
     @RequestMapping("/search")
-    public ResultVO searchProject(@RequestBody int id){
+    public ResultVO searchProject(@MultiRequestBody int id){
         return projectService.searchById(id);
     }
 }

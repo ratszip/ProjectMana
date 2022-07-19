@@ -9,5 +9,5 @@ public interface FunctionDAO {
     int update(Function function);
     Function searchById(int id);
     int delete(int id);
-    List<Function> getList(int mid);
+    List<Function> searchAll(int mid);
 }

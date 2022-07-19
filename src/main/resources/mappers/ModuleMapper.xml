@@ -1,5 +1,107 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.thf.dao.ModuleDAO">
+    <select id="searchBymId">
+        select
+        *
+        from
+        module
+        where
+        m_id =#{mId}
+    </select>
 
+    <resultMap id="moduleMap" type="Module">
+        <id column="m_id" property="mId"/>
+        <result column="m_name" property="mName"/>
+        <result column="m_des" property="mDes"/>
+        <result column="m_status" property="mStatus"/>
+        <result column="m_progress" property="mProgress"/>
+        <result column="m_start_time" property="mStartTime"/>
+        <result column="p_id" property="pId"/>
+        <result column="m_end_time" property="mEndTime"/>
+        <result column="m_act_time" property="mActTime"/>
+        <collection property="functionList" ofType="Function" select="com.thf.dao.FunctionDAO.searchAll" column="m_id">
+        </collection>
+    </resultMap>
+    <select id="getFuncAll" resultMap="moduleMap">
+        select * from function where m_id=#{mId}
+    </select>
+    <insert id="insert"  useGeneratedKeys="true" keyProperty="mId">
+        insert into module(
+        <if test="mName != null and mName != ''">
+            m_name,
+        </if>
+        <if test="mDes != null and mDes != ''">
+            m_des,
+        </if>
+        <if test="mStatus != null and mStatus != ''">
+            m_status,
+        </if>
+        <if test="mProgress != null and mProgress != ''">
+            m_progress,
+        </if>
+        <if test="mStartTime != null and mStartTime != ''">
+            m_start_time,
+        </if>
+        <if test="mEndTime != null and mEndTime != ''">
+            m_end_time,
+        </if>
+            p_id)
+        values(
+        <if test="mName != null and mName != ''">
+            #{mName},
+        </if>
+        <if test="mDes != null and mDes != ''">
+            #{mDes},
+        </if>
+        <if test="mStatus != null and mStatus != ''">
+            #{mStatus},
+        </if>
+        <if test="mProgress != null and mProgress != ''">
+            #{mProgress},
+        </if>
+        <if test="mStartTime != null and mStartTime != ''">
+            #{mStartTime},
+        </if>
+        <if test="mEndTime != null and mEndTime != ''">
+            #{mEndTime},
+        </if>
+        #{pId})
+    </insert>
+
+    <update id="update">
+        UPDATE module
+        <set>
+            <if test="mName != null and mName != ''">
+                m_name=#{mName},
+            </if>
+            <if test="mDes != null and mDes != ''">
+                m_des=#{mDes},
+            </if>
+            <if test="mStatus != null and mStatus != ''">
+                m_status=#{mStatus},
+            </if>
+            <if test="relateUser != null and relateUser != ''">
+                m_progress=#{mProgress},
+            </if>
+            <if test="mStartTime != null and mStartTime != ''">
+                m_start_time=#{mStartTime},
+            </if>
+            <if test="mEndTime != null and mEndTime != ''">
+                m_end_time=#{mEndTime},
+            </if>
+            <if test="mProgress != null and mProgress != ''">
+                m_progress=#{mProgress}
+            </if>
+        </set>
+    </update>
+
+    <delete id="delete">
+        DELETE from module
+        where m_id=#{mId}
+    </delete>
+    <select id="searchAll">
+        select * from module
+        where p_id=#{pId}
+    </select>
 </mapper>

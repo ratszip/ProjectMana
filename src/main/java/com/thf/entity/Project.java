@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Project {
-
-    private int projectId;
+    private Integer projectId;
     private String projectName;
     private String describe;
     private int projectStatus;
@@ -20,4 +21,5 @@ public class Project {
     private long startTime;
     private long endTime;
     private int progress;
+    private List<Module> moduleList;
 }
