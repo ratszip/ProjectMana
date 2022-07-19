@@ -1,5 +1,96 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.thf.dao.FunctionDAO">
+    <resultMap id="functionMap" type="Function">
+        <id column="f_id" property="fId"/>
+        <result column="f_des" property="fDes"/>
+        <result column="f_name" property="fName"/>
+        <result column="f_status" property="fStatus"/>
+        <result column="f_progress" property="fProgress"/>
+        <result column="f_start_time" property="fStartTime"/>
+        <result column="f_end_time" property="fEndTime"/>
+        <result column="f_act_time" property="fActTime"/>
+        <result column="m_id" property="mId"/>
+    </resultMap>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="fId">
+        insert into function(
+        <if test="fName != null and fName != ''">
+            f_name,
+        </if>
+        <if test="fDes != null and fDes != ''">
+            f_des,
+        </if>
+        <if test="fStatus != null and fStatus != ''">
+            f_status,
+        </if>
+        <if test="fProgress != null and fProgress != ''">
+            f_progress,
+        </if>
+        <if test="fStartTime != null and fStartTime != ''">
+            f_start_time,
+        </if>
+        <if test="fEndTime != null and fEndTime != ''">
+            f_end_time,
+        </if>
+        m_id)
+        values(
+        <if test="fName != null and fName != ''">
+            #{fName},
+        </if>
+        <if test="fDes != null and fDes != ''">
+            #{fDes},
+        </if>
+        <if test="fStatus != null and fStatus != ''">
+            #{fStatus},
+        </if>
+        <if test="fProgress != null and fProgress != ''">
+            #{fProgress},
+        </if>
+        <if test="fStartTime != null and fStartTime != ''">
+            #{fStartTime},
+        </if>
+        <if test="fEndTime != null and fEndTime != ''">
+            #{fEndTime},
+        </if>
+        #{mId})
+    </insert>
+    <select id="searchById" resultMap="functionMap">
+        SELECT
+        *
+        FROM
+        function
+        WHERE
+        m_id=#{mId}
+    </select>
+    <update id="update">
+        UPDATE function
+        <set>
+            <if test="fName != null and fName != ''">
+                f_name=#{fName},
+            </if>
+            <if test="fDes != null and fDes != ''">
+                f_des=#{fDes},
+            </if>
+            <if test="fStatus != null and fStatus != ''">
+                f_status=#{fStatus},
+            </if>
+            <if test="fProgress != null and fProgress != ''">
+                f_progress=#{fProgress},
+            </if>
+            <if test="fStartTime != null and fStartTime != ''">
+                f_start_time=#{fStartTime},
+            </if>
+            <if test="fEndTime != null and fEndTime != ''">
+                f_end_time=#{fEndTime},
+            </if>
+            <if test="fProgress != null and fProgress != ''">
+                f_progress=#{fProgress}
+            </if>
+        </set>
+    </update>
 
+    <delete id="delete">
+        DELETE from function
+        where f_id=#{fId}
+    </delete>
 </mapper>

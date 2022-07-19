@@ -29,11 +29,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ResultVO updateProject(String token, Project project) {
-//        Integer id= (Integer) JwtUtil.parseToken(token).get("id");
+       // Integer uid= (Integer) JwtUtil.parseToken(token).get("id");
        int pid= project.getProjectId();
-       if(projectDAO.searchProject(pid)!=null){
+       if(projectDAO.searchById(pid)!=null){
            if(projectDAO.updateProject(project)>0){
-               Project pro= projectDAO.searchProject(pid);
+               Project pro= projectDAO.searchById(pid);
                return new ResultVO(2000,"更新资料成功",pro);
            }
            return new ResultVO(5000,"更新失败");
@@ -43,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ResultVO searchById(int id) {
-        Project project=projectDAO.searchProject(id);
+        Project project=projectDAO.searchById(id);
         if(project!=null){
             return new ResultVO(2000,"搜索成功",project);
         }

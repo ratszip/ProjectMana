@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 public class Function {
     private int fId;
     private String fName;
-    private int status;
+    private String fDes;
+    private int fStatus;
     private long fStartTime;
     private long fEndTime;
     private long fActTime;
-    private int progress;
+    private int fProgress;
     private int mId;
 }

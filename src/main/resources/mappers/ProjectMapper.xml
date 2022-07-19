@@ -30,16 +30,22 @@
     </insert>
     <resultMap type="Project" id="projectMap">
         <id column="project_id" property="projectId"/>
-        <id column="project_name" property="projectName"/>
-        <id column="describe" property="describe"/>
-        <id column="project_status" property="projectStatus"/>
-        <id column="create_user" property="createUser"/>
-        <id column="create_time" property="createTime"/>
-        <id column="relate_user" property="relateUser"/>
-        <id column="start_time" property="startTime"/>
-        <id column="end_time" property="endTime"/>
-        <id column="progress" property="progress"/>
+        <result column="project_name" property="projectName"/>
+        <result column="describe" property="describe"/>
+        <result column="project_status" property="projectStatus"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="relate_user" property="relateUser"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="progress" property="progress"/>
+        <collection property="moduleList" ofType="Module" select="com.thf.dao.ModuleDAO.searchAll" column="project_id">
+        </collection>
     </resultMap>
+
+    <select id="getModuleAll" resultMap="projectMap">
+        select * from module where p_id=#{projectId}
+    </select>
     <update id="updateProject">
         update project
         <set>
@@ -65,7 +71,7 @@
                 progress=#{progress}
             </if>
         </set>
-        where project_id =#{projectId}
+        where project_id=#{projectId}
     </update>
 
     <select id="searchById" resultMap="projectMap">
@@ -74,4 +80,5 @@
         from project
         where project_id=#{projectId}
     </select>
+
 </mapper>
