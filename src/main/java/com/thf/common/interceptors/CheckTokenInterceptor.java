@@ -36,14 +36,6 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
                 //如果token正确（密码正确，有效期内）则正常执行，否则抛出异常
                 Jws<Claims> claimsJws = parser.parseClaimsJws(token);
                 return true;
-            }catch (ExpiredJwtException e){
-//                claims =e.getClaims();
-                long tm=System.currentTimeMillis();
-                ResultVO resultVO = new ResultVO(4002, "登录过期，请重新登录！");
-                doResponse(response,resultVO);
-            }catch (UnsupportedJwtException e){
-                ResultVO resultVO = new ResultVO(4003, "Token不合法！");
-                doResponse(response,resultVO);
             }catch (Exception e){
                 ResultVO resultVO = new ResultVO(4001, "请先登录！");
                 doResponse(response,resultVO);
