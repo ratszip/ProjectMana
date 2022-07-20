@@ -11,9 +11,13 @@
         <result column="f_end_time" property="fEndTime"/>
         <result column="f_act_time" property="fActTime"/>
         <result column="m_id" property="mId"/>
+        <result column="f_create_time" property="fCreateTime"/>
     </resultMap>
     <insert id="insert" useGeneratedKeys="true" keyProperty="fId">
         insert into function(
+        <if test="fCreateTime != null and fCreateTime != ''">
+            f_create_time,
+        </if>
         <if test="fName != null and fName != ''">
             f_name,
         </if>
@@ -34,6 +38,9 @@
         </if>
         m_id)
         values(
+        <if test="fCreateTime != null and fCreateTime != ''">
+            #{fCreateTime},
+        </if>
         <if test="fName != null and fName != ''">
             #{fName},
         </if>
@@ -60,7 +67,7 @@
         FROM
         function
         WHERE
-        m_id=#{mId}
+        f_id=#{fId}
     </select>
     <update id="update">
         UPDATE function
@@ -88,7 +95,9 @@
             </if>
         </set>
     </update>
-
+    <select id="searchAllFunction" parameterType="java.util.List" resultMap="functionMap">
+        select * from function where m_id=#{mId}
+    </select>
     <delete id="delete">
         DELETE from function
         where f_id=#{fId}

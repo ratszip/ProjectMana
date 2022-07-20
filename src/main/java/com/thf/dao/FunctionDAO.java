@@ -5,9 +5,9 @@ import com.thf.entity.Function;
 import java.util.List;
 
 public interface FunctionDAO {
-    Function insert(Function function);
+    int insert(Function function);
     int update(Function function);
-    Function searchById(int id);
+    Function searchById(int fId);
     int delete(int id);
-    List<Function> searchAll(int mid);
+    List<Function> searchAllFunction(int mid);
 }

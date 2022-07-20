@@ -39,12 +39,19 @@
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
         <result column="progress" property="progress"/>
-        <collection property="moduleList" ofType="Module" select="com.thf.dao.ModuleDAO.searchAll" column="project_id">
-        </collection>
+<!--        <collection property="moduleList" ofType="Module" select="com.thf.dao.ModuleDAO.searchAll" column="project_id">-->
+<!--        </collection>-->
     </resultMap>
 
-    <select id="getModuleAll" resultMap="projectMap">
-        select * from module where p_id=#{projectId}
+    <select id="getAllProject" parameterType="java.util.List" resultMap="projectMap">
+        select * from `project`
+        where
+        <if test="createUser != null and createUser != '' and createUser != 0">
+            create_user=#{createUser}
+        </if>
+        <if test="relateUser != null and relateUser != '' and relateUser != 0">
+           OR relate_user=#{relateUser}
+        </if>
     </select>
     <update id="updateProject">
         update project

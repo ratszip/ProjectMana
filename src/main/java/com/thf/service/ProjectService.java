@@ -8,4 +8,5 @@ public interface ProjectService {
     ResultVO updateProject(String token,Project project);
     ResultVO searchById(int id);
     ResultVO deleteProject(String token,Project project);
+    ResultVO getAllProject(String token);
 }

@@ -1,5 +1,6 @@
 package com.thf.common;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,11 +52,11 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(value =Exception.class)
+    @ExceptionHandler(value = ExpiredJwtException.class)
     @ResponseBody
-    public ResultResponse exceptionHandler(HttpServletRequest req, Exception e){
+    public ResultResponse exceptionHandler(HttpServletRequest req, ExpiredJwtException e){
         logger.error("未知异常！原因是:",e);
-        return ResultResponse.error(ExceptionEnum.INTERNAL_SERVER_ERROR);
+        return ResultResponse.error("token过期");
     }
 }
 

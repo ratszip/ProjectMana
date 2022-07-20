@@ -60,4 +60,11 @@ public class ProjectController {
     public ResultVO searchProject(@MultiRequestBody int id){
         return projectService.searchById(id);
     }
+
+    @ApiImplicitParam(name="token",value ="token",dataType = "String",paramType = "header",required = true)
+    @ApiOperation(value = "项目列表",httpMethod = "POST")
+    @RequestMapping("/list")
+    public ResultVO projectList(@RequestHeader String token){
+        return projectService.getAllProject(token);
+    }
 }

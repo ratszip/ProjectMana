@@ -1,26 +1,48 @@
 package com.thf.service.Impl;
 
+import com.thf.common.oo.Res;
 import com.thf.common.oo.ResultVO;
+import com.thf.common.utils.JwtUtil;
 import com.thf.dao.ModuleDAO;
+import com.thf.dao.ProjectDAO;
 import com.thf.entity.Module;
+import com.thf.entity.Project;
 import com.thf.service.ModuleService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class ModuleServiceImpl implements ModuleService {
 
     @Resource
     ModuleDAO moduleDAO;
+    @Resource
+    ProjectDAO projectDAO;
 
     @Override
-    public ResultVO createModule(int pid, Module module) {
-        module.setPId(pid);
-        if(moduleDAO.insert(module)!=null){
-            return new ResultVO(2000,"新建成功",searchById(module.getMId()));
+    public ResultVO createModule(String token,int pid, Module module) {
+        int uid= (int) JwtUtil.parseToken(token).get("id");
+        Project project=new Project();
+        project.setCreateUser(uid);
+        List<Project> lp=projectDAO.getAllProject(project);
+        if(lp==null){
+            Res.res(2000,"请先建立项目");
+        }else {
+            for (Project po:lp) {
+                if(pid==po.getProjectId()){
+                    module.setPId(pid);
+                    module.setMCreateTime(System.currentTimeMillis());
+                    if(moduleDAO.insert(module)>0){
+                        return Res.res(2000, "新建成功", moduleDAO.searchBymId(module.getMId()));
+                    }
+                    return Res.res(5000,"新建失败");
+                }
+            }
+            return Res.res(2000,"用户没有对应的项目id");
         }
-        return new ResultVO(2000,"新建模块失败");
+        return Res.res(5000,"新建模块失败");
     }
 
     @Override

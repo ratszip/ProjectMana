@@ -19,5 +19,6 @@ public class Module {
     private long mEndTime;
     private Integer pId;
     private long mActTime;
-    private List<Function> functionList;
+    private long mCreateTime;
+    List<Function> functionList;
 }

@@ -20,7 +20,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/users/reset/**")
                 .addPathPatterns("/users/update")
                 .addPathPatterns("/users/info")
-                .addPathPatterns("/project/update");
+                .addPathPatterns("/project/update")
+                .addPathPatterns("/function/create");
                // .excludePathPatterns("/users/**");
     }
 }
