@@ -54,7 +54,6 @@
         where
         phone = #{phone}
     </select>
-
     <update id="updateUsers">
         update users
         set

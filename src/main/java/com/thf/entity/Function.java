@@ -17,4 +17,5 @@ public class Function {
     private long fActTime;
     private int fProgress;
     private int mId;
+    private long fCreateTime;
 }

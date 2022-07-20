@@ -8,4 +8,7 @@ public class Res {
     public static ResultVO res(int code,String msg,Object data){
         return new ResultVO(code,msg,data);
     }
+    public static ResultVO res(int code,String msg){
+        return new ResultVO(code,msg);
+    }
 }

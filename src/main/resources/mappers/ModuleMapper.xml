@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.thf.dao.ModuleDAO">
-    <select id="searchBymId">
+    <select id="searchBymId" resultMap="moduleMap">
         select
         *
         from
@@ -20,14 +20,18 @@
         <result column="p_id" property="pId"/>
         <result column="m_end_time" property="mEndTime"/>
         <result column="m_act_time" property="mActTime"/>
-        <collection property="functionList" ofType="Function" select="com.thf.dao.FunctionDAO.searchAll" column="m_id">
-        </collection>
+        <result column="m_create_time" property="mCreateTime"/>
+<!--        <collection property="functionList" ofType="Function" select="com.thf.dao.FunctionDAO.searchAll" column="m_id">-->
+<!--        </collection>-->
     </resultMap>
-    <select id="getFuncAll" resultMap="moduleMap">
-        select * from function where m_id=#{mId}
+    <select id="searchAllModule" parameterType="java.util.List" resultMap="moduleMap">
+        select * from module where p_id=#{pId}
     </select>
     <insert id="insert"  useGeneratedKeys="true" keyProperty="mId">
         insert into module(
+        <if test="mCreateTime != null and mCreateTime != ''">
+            m_create_time,
+        </if>
         <if test="mName != null and mName != ''">
             m_name,
         </if>
@@ -48,6 +52,9 @@
         </if>
             p_id)
         values(
+        <if test="mCreateTime != null and mCreateTime != ''">
+            #{mCreateTime},
+        </if>
         <if test="mName != null and mName != ''">
             #{mName},
         </if>

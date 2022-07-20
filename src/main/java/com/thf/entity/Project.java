@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Project {
-    private Integer projectId;
+    private int projectId;
     private String projectName;
     private String describe;
     private int projectStatus;
