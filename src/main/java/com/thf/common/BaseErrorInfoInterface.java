@@ -10,7 +10,7 @@ public interface BaseErrorInfoInterface {
      *  错误码
      * @return
      */
-    String getResultCode();
+    int getResultCode();
 
     /**
      * 错误描述
