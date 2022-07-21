@@ -68,19 +68,16 @@ public class FunctionServiceImpl implements FunctionService {
     }
 
     @Override
-    public ResultVO deleteFunc(String token, int[] fidlist) {
+    public ResultVO deleteFunc(String token, int[] fidArr) {
         int uid = (int) JwtUtil.parseToken(token).get("id");
-        for (int fid:fidlist) {
-            int mpid = moduleDAO.searchBymId(fid).getPId();
+        for (int fid:fidArr) {
+            int mpid = moduleDAO.searchBymId(functionDAO.searchById(fid).getMId()).getPId();
             if (projectDAO.searchById(mpid).getCreateUser() == uid) {
-                if (functionDAO.delete(fid) > 0) {
-                    if(fidlist[fidlist.length-1]==fid) {
+                functionDAO.delete(fid);
+                    if(fidArr[fidArr.length-1]==fid) {
                         return Res.res(2000, "删除成功");
-                    }
                 }
-                return Res.res(5000, "删除失败");
             }
-            return Res.res(4000, "仅可删除自己账户下的功能");
         }
         return Res.res(5000, "服务器内部错误");
     }

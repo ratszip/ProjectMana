@@ -43,7 +43,6 @@ public class ModuleController {
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(name="pid",value ="项目id",required = true,dataType = "int",paramType = "body"),
             @ApiImplicitParam(name="mid",value ="模块id",required = true,dataType = "int",paramType = "body"),
             @ApiImplicitParam(name="mName",value ="模块名称",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="mDes",value ="描述",dataType = "String",paramType = "body"),
@@ -60,12 +59,12 @@ public class ModuleController {
         return resultVO;
     }
 
-    @ApiImplicitParam(name = "midlist", value = "模块id数组", required = true, dataType = "int[]", paramType = "body")
+    @ApiImplicitParam(name = "midArr", value = "模块id数组", required = true, dataType = "int[]", paramType = "body")
     @ApiOperation(value = "删除模块", httpMethod = "POST")
     @RequestMapping("/delete")
     public ResultVO deleteModule(@RequestHeader String token,
-                                   @ApiIgnore @MultiRequestBody int[] midlist) {
-        ResultVO resultVO = moduleService.deleteModule(token,midlist);
+                                   @ApiIgnore @MultiRequestBody int[] midArr) {
+        ResultVO resultVO = moduleService.deleteModule(token,midArr);
         return resultVO;
     }
 }

@@ -25,69 +25,65 @@ public class ModuleServiceImpl implements ModuleService {
     FunctionDAO functionDAO;
 
     @Override
-    public ResultVO createModule(String token,int pid, Module module) {
-        int uid= (int) JwtUtil.parseToken(token).get("id");
-        Project project=new Project();
+    public ResultVO createModule(String token, int pid, Module module) {
+        int uid = (int) JwtUtil.parseToken(token).get("id");
+        Project project = new Project();
         project.setCreateUser(uid);
-        List<Project> lp=projectDAO.getAllProject(project);
-        if(lp==null){
-            Res.res(2000,"请先建立项目");
-        }else {
-            for (Project po:lp) {
-                if(pid==po.getProjectId()){
+        List<Project> lp = projectDAO.getAllProject(project);
+        if (lp == null) {
+            Res.res(2000, "请先建立项目");
+        } else {
+            for (Project po : lp) {
+                if (pid == po.getProjectId()) {
                     module.setPId(pid);
                     module.setMCreateTime(System.currentTimeMillis());
-                    if(moduleDAO.insert(module)>0){
+                    if (moduleDAO.insert(module) > 0) {
                         return Res.res(2000, "新建成功", moduleDAO.searchBymId(module.getMId()));
                     }
-                    return Res.res(5000,"新建失败");
+                    return Res.res(5000, "新建失败");
                 }
             }
-            return Res.res(2000,"用户没有对应的项目id");
+            return Res.res(2000, "用户没有对应的项目id");
         }
-        return Res.res(5000,"新建模块失败");
+        return Res.res(5000, "新建模块失败");
     }
 
     @Override
-    public ResultVO updateModule(String token,Module module) {
-        int uid= (int) JwtUtil.parseToken(token).get("id");
-        if(projectDAO.searchById(module.getPId()).getCreateUser()==uid){
-            if(moduleDAO.update(module)>0){
-                return Res.res(2000,"修改成功",moduleDAO.searchBymId(module.getMId()));
+    public ResultVO updateModule(String token, Module module) {
+        int uid = (int) JwtUtil.parseToken(token).get("id");
+        if (projectDAO.searchById(module.getPId()).getCreateUser() == uid) {
+            if (moduleDAO.update(module) > 0) {
+                return Res.res(2000, "修改成功", moduleDAO.searchBymId(module.getMId()));
             }
-            return Res.res(5000,"修改失败");
+            return Res.res(5000, "修改失败");
         }
-        return Res.res(4000,"仅可更改自己账户下的模块");
+        return Res.res(4000, "仅可更改自己账户下的模块");
     }
 
     @Override
-    public ResultVO deleteModule(String token,int[] midlist) {
-        int uid= (int) JwtUtil.parseToken(token).get("id");
-        for (int mid:midlist) {
-            if(projectDAO.searchById(mid).getCreateUser()==uid){
-                if(functionDAO.deleteAll(mid)>0){
-                    if (moduleDAO.delete(mid) > 0) {
-                        if(midlist[midlist.length-1]==mid) {
-                            return Res.res(2000, "删除成功");
-                        }
-                    }
-                    return Res.res(5000,"服务器错误，删除失败");
+    public ResultVO deleteModule(String token, int[] midArr) {
+        int uid = (int) JwtUtil.parseToken(token).get("id");
+        for (int mid : midArr) {
+            Project project = projectDAO.searchById(moduleDAO.searchBymId(mid).getPId());
+            int uiid = project.getCreateUser();
+            if (uiid == uid) {
+                functionDAO.deleteAll(mid);
+                moduleDAO.delete(mid);
+                if (midArr[midArr.length - 1] == mid) {
+                    return Res.res(2000, "删除成功");
                 }
-                return Res.res(5000,"服务器错误，删除失败");
             }
-            return Res.res(4000,"仅可删除自己账户下的模块");
         }
-        return Res.res(5000,"服务器错误");
+        return Res.res(5000, "服务器错误");
     }
-
 
 
     @Override
     public ResultVO searchById(int mid) {
-        Module module= moduleDAO.searchBymId(mid);
-        if(module!=null){
-            return Res.res(2000,"成功",module);
+        Module module = moduleDAO.searchBymId(mid);
+        if (module != null) {
+            return Res.res(2000, "成功", module);
         }
-        return Res.res(5000,"没有找到对应模块");
+        return Res.res(5000, "没有找到对应模块");
     }
 }

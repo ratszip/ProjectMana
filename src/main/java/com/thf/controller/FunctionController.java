@@ -58,12 +58,12 @@ public class FunctionController {
     }
 
 
-    @ApiImplicitParam(name = "fidlist", value = "功能id数组", required = true, dataType = "int[]", paramType = "body")
+    @ApiImplicitParam(name = "fidArr", value = "功能id数组", required = true, dataType = "int[]", paramType = "body")
     @ApiOperation(value = "删除功能", httpMethod = "POST")
     @RequestMapping("/delete")
     public ResultVO deleteFunction(@RequestHeader String token,
-                                   @ApiIgnore @MultiRequestBody int[] fidlist) {
-        ResultVO resultVO = functionService.deleteFunc(token, fidlist);
+                                   @ApiIgnore @MultiRequestBody int[] fidArr) {
+        ResultVO resultVO = functionService.deleteFunc(token, fidArr);
         return resultVO;
     }
 }

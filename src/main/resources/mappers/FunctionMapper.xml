@@ -94,6 +94,7 @@
                 f_progress=#{fProgress}
             </if>
         </set>
+        where f_id=#{fId}
     </update>
     <select id="searchAllFunction" parameterType="java.util.List" resultMap="functionMap">
         select * from function where m_id=#{mId}
