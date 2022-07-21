@@ -5,6 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 
+import java.util.Date;
+
 public class JwtUtil {
 
     public static Claims parseToken(String token){
@@ -14,4 +16,12 @@ public class JwtUtil {
         Claims claims = parser.parseClaimsJws(token).getBody();
         return claims;
     }
+    public static Boolean isTokenExpired(Claims claims) {
+        //不管是否过期，都返回claims对象
+//        Claims claims = parseToken(token);
+        Date expiration = claims.getExpiration();
+        //和当前时间进行对比来判断是否过期
+        return new Date(System.currentTimeMillis()).after(expiration);
+    }
+
 }

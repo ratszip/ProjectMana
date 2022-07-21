@@ -2,6 +2,7 @@ package com.thf.common;
 
 import com.thf.common.oo.Res;
 import com.thf.common.oo.ResultVO;
+import com.thf.common.utils.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.slf4j.Logger;
@@ -49,18 +50,21 @@ public class GlobalExceptionHandler {
         return Res.res(5000,"空指针错误");
     }
 
-    /**
-     * 处理token异常
-     * @param req
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(value = ExpiredJwtException.class)
-    @ResponseBody
-    public ResultVO exceptionHandler(HttpServletRequest req, ExpiredJwtException e){
-        logger.error("token过期！原因是:",e);
-        return Res.res(40002,"token过期");
-    }
+//    /**
+//     * 处理token异常
+//     * @param req
+//     * @param e
+//     * @return
+//     */
+//    @ExceptionHandler(value = ExpiredJwtException.class)
+//    @ResponseBody
+//    public ResultVO exceptionHandler(HttpServletRequest req, ExpiredJwtException e){
+//        logger.error("token过期！原因是:",e);
+//        if(JwtUtil.isTokenExpired(e.getClaims())) {
+//            return Res.res(40002, "token过期");
+//        }
+//        return null;
+//    }
 
     /**
      * 处理token异常

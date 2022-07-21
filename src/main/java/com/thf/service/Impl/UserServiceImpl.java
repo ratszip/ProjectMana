@@ -14,6 +14,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
                             .setIssuedAt(new Date())                            //设置token的生成时间
                             .setId(user.getUserId() + "")               //设置用户id为token  id
                             .setClaims(map)                                     //map中可以存放用户的角色权限信息
-                            .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60))//设置token过期时间
+                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
                             .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)     //设置加密方式和加密密码
                             .compact();
                     return Res.res(2000, "登录成功", token);
@@ -83,11 +84,14 @@ public class UserServiceImpl implements UserService {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("id", user.getUserId());
                     map.put("usertype", user.getUserType());
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.add(Calendar.DATE,30);
                     String token = builder.setSubject(key)                     //主题，就是token中携带的数据
 //                            .setIssuedAt(new Date())                            //设置token的生成时间
                             .setId(user.getUserId() + "")               //设置用户id为token  id
                             .setClaims(map)                                     //map中可以存放用户的角色权限信息
-                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
+//                            .setExpiration(calendar.getTime())
+                            .setExpiration(new Date(System.currentTimeMillis() + 20*1000))//设置token过期时间
                             .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
                             .compact();
 
