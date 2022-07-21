@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectVO {
-    List<Project> projectList;
-
+    private List<Project> projectList;
+    private int total;
 }

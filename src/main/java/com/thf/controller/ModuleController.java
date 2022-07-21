@@ -2,6 +2,7 @@ package com.thf.controller;
 
 import com.thf.common.oo.ResultVO;
 import com.thf.config.MultiRequestBody;
+import com.thf.entity.Function;
 import com.thf.entity.Module;
 import com.thf.entity.Project;
 import com.thf.service.ModuleService;
@@ -21,7 +22,7 @@ import javax.annotation.Resource;
 @Controller
 @RequestMapping("/module")
 @ResponseBody
-@Api(value = "项目模块",tags = "项目模块")
+@Api(value = "模块",tags = "模块")
 public class ModuleController {
     @Resource
     ModuleService moduleService;
@@ -30,14 +31,41 @@ public class ModuleController {
             @ApiImplicitParam(name="mName",value ="模块名称",required = true,dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="mDes",value ="描述",dataType = "String",paramType = "body"),
             @ApiImplicitParam(name="mStartTime",value ="开始时间",dataType = "long",paramType = "body"),
-            @ApiImplicitParam(name="mEndTime",value ="结束时间",dataType = "long",paramType = "body"),
+            @ApiImplicitParam(name="mEndTime",value ="结束时间",dataType = "long",paramType = "body")
     })
-    @ApiOperation(value = "创建项目",httpMethod = "POST")
+    @ApiOperation(value = "创建模块",httpMethod = "POST")
     @RequestMapping("/create")
     public ResultVO createModule(@RequestHeader String token,
                                   @MultiRequestBody int pid,
                                   @ApiIgnore @MultiRequestBody Module module){
         ResultVO resultVO= moduleService.createModule(token,pid,module);
+        return resultVO;
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pid",value ="项目id",required = true,dataType = "int",paramType = "body"),
+            @ApiImplicitParam(name="mid",value ="模块id",required = true,dataType = "int",paramType = "body"),
+            @ApiImplicitParam(name="mName",value ="模块名称",dataType = "String",paramType = "body"),
+            @ApiImplicitParam(name="mDes",value ="描述",dataType = "String",paramType = "body"),
+            @ApiImplicitParam(name="mStartTime",value ="开始时间",dataType = "long",paramType = "body"),
+            @ApiImplicitParam(name="mEndTime",value ="结束时间",dataType = "long",paramType = "body"),
+            @ApiImplicitParam(name="mProgress",value ="进度",dataType = "int",paramType = "body"),
+            @ApiImplicitParam(name="mStatus",value ="状态",dataType = "int",paramType = "body")
+    })
+    @ApiOperation(value = "更新模块",httpMethod = "POST")
+    @RequestMapping("/update")
+    public ResultVO updateModule(@RequestHeader String token,
+                                 @ApiIgnore @MultiRequestBody Module module){
+        ResultVO resultVO= moduleService.updateModule(token,module);
+        return resultVO;
+    }
+
+    @ApiImplicitParam(name = "midlist", value = "模块id数组", required = true, dataType = "int[]", paramType = "body")
+    @ApiOperation(value = "删除模块", httpMethod = "POST")
+    @RequestMapping("/delete")
+    public ResultVO deleteModule(@RequestHeader String token,
+                                   @ApiIgnore @MultiRequestBody int[] midlist) {
+        ResultVO resultVO = moduleService.deleteModule(token,midlist);
         return resultVO;
     }
 }

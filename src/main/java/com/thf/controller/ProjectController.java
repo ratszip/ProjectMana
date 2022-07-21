@@ -54,12 +54,20 @@ public class ProjectController {
         return projectService.updateProject(token,project);
     }
 
-    @ApiImplicitParam(name="id",value ="搜索内容",dataType = "Integer",paramType = "body")
+    @ApiImplicitParam(name="id",value ="id搜索",dataType = "Integer",paramType = "body")
     @ApiOperation(value = "搜索项目",httpMethod = "POST")
-    @RequestMapping("/search")
-    public ResultVO searchProject(@MultiRequestBody int id){
+    @RequestMapping("/searchid")
+    public ResultVO searcByid(@MultiRequestBody int id){
         return projectService.searchById(id);
     }
+
+    @ApiImplicitParam(name="key",value ="搜索内容",dataType = "String",paramType = "body")
+    @ApiOperation(value = "搜索项目",httpMethod = "POST")
+    @RequestMapping("/searchkey")
+    public ResultVO searchBykey(@MultiRequestBody String key){
+        return projectService.searchKey(key);
+    }
+
 
     @ApiImplicitParam(name="token",value ="token",dataType = "String",paramType = "header",required = true)
     @ApiOperation(value = "项目列表",httpMethod = "POST")
