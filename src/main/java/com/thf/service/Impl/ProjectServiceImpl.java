@@ -32,10 +32,10 @@ public class ProjectServiceImpl implements ProjectService {
         project.setCreateUser(id);
         project.setCreateTime(System.currentTimeMillis());
         if(projectDAO.insertProject(project)>0){
-            return new ResultVO(2000,"创建成功",project);
+            return Res.res(2000,"创建成功",project);
         }
 
-        return new ResultVO(5000,"创建失败",null);
+        return Res.res(5000,"创建失败",null);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class ProjectServiceImpl implements ProjectService {
        if(projectDAO.searchById(pid)!=null){
            if(projectDAO.updateProject(project)>0){
                Project pro= projectDAO.searchById(pid);
-               return new ResultVO(2000,"更新资料成功",pro);
+               return Res.res(2000,"更新资料成功",pro);
            }
-           return new ResultVO(5000,"更新失败");
+           return Res.res(5000,"更新失败");
        }
         return null;
     }
@@ -56,9 +56,19 @@ public class ProjectServiceImpl implements ProjectService {
     public ResultVO searchById(int id) {
         Project project=projectDAO.searchById(id);
         if(project!=null){
-            return new ResultVO(2000,"搜索成功",project);
+            return Res.res(2000,"搜索成功",project);
         }
-        return new ResultVO(5000,"没有数据");
+        return Res.res(5000,"没有数据");
+    }
+
+    @Override
+    public ResultVO searchKey(String key) {
+        List<Project> projectList=projectDAO.searchKey(key);
+        ProjectVO projectVO=new ProjectVO(projectList,projectList.size());
+        if(projectList.size()>0){
+            return Res.res(2000,"搜索成功",projectVO);
+        }
+        return Res.res(2000,"没有数据",projectVO);
     }
 
     @Override
@@ -82,10 +92,7 @@ public class ProjectServiceImpl implements ProjectService {
             }
             po.setModuleList(moduleList);
         }
-        ProjectVO projectVO=new ProjectVO(projectList);
-
+        ProjectVO projectVO=new ProjectVO(projectList,projectList.size());
         return Res.res(2000,"获取项目列表成功",projectVO);
     }
-
-
 }

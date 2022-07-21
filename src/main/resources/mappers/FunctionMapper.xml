@@ -102,4 +102,9 @@
         DELETE from function
         where f_id=#{fId}
     </delete>
+
+    <delete id="deleteAll">
+        DELETE from function
+        where m_id=#{mId}
+    </delete>
 </mapper>

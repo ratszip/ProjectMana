@@ -101,6 +101,8 @@
                 m_progress=#{mProgress}
             </if>
         </set>
+        where
+        p_id=#{pid}
     </update>
 
     <delete id="delete">

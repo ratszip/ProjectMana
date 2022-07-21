@@ -20,24 +20,50 @@ import javax.annotation.Resource;
 @Controller
 @RequestMapping("/function")
 @ResponseBody
-@Api(value = "功能",tags = "功能")
+@Api(value = "功能", tags = "功能")
 public class FunctionController {
 
     @Resource
     FunctionService functionService;
+
     @ApiImplicitParams({
-            @ApiImplicitParam(name="mid",value ="模块id",required = true,dataType = "int",paramType = "body"),
-            @ApiImplicitParam(name="fName",value ="功能名称",required = true,dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="fDes",value ="描述",dataType = "String",paramType = "body"),
-            @ApiImplicitParam(name="fStartTime",value ="开始时间",dataType = "long",paramType = "body"),
-            @ApiImplicitParam(name="fEndTime",value ="结束时间",dataType = "long",paramType = "body"),
+            @ApiImplicitParam(name = "mid", value = "模块id", required = true, dataType = "int", paramType = "body"),
+            @ApiImplicitParam(name = "fName", value = "功能名称", required = true, dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "fDes", value = "描述", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "fStartTime", value = "开始时间", dataType = "long", paramType = "body"),
+            @ApiImplicitParam(name = "fEndTime", value = "结束时间", dataType = "long", paramType = "body")
     })
-    @ApiOperation(value = "创建项目",httpMethod = "POST")
+    @ApiOperation(value = "创建功能", httpMethod = "POST")
     @RequestMapping("/create")
     public ResultVO createModule(@RequestHeader String token,
                                  @MultiRequestBody int mid,
-                                 @ApiIgnore @MultiRequestBody Function function){
-        ResultVO resultVO= functionService.createFunc(token,mid,function);
+                                 @ApiIgnore @MultiRequestBody Function function) {
+        ResultVO resultVO = functionService.createFunc(token, mid, function);
+        return resultVO;
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fid", value = "功能id", required = true, dataType = "int", paramType = "body"),
+            @ApiImplicitParam(name = "fName", value = "功能名称", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "fDes", value = "描述", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "fStartTime", value = "开始时间", dataType = "long", paramType = "body"),
+            @ApiImplicitParam(name = "fEndTime", value = "结束时间", dataType = "long", paramType = "body")
+    })
+    @ApiOperation(value = "更新功能", httpMethod = "POST")
+    @RequestMapping("/update")
+    public ResultVO updateFunction(@RequestHeader String token,
+                                   @ApiIgnore @MultiRequestBody Function function) {
+        ResultVO resultVO = functionService.updateFunc(token, function);
+        return resultVO;
+    }
+
+
+    @ApiImplicitParam(name = "fidlist", value = "功能id数组", required = true, dataType = "int[]", paramType = "body")
+    @ApiOperation(value = "删除功能", httpMethod = "POST")
+    @RequestMapping("/delete")
+    public ResultVO deleteFunction(@RequestHeader String token,
+                                   @ApiIgnore @MultiRequestBody int[] fidlist) {
+        ResultVO resultVO = functionService.deleteFunc(token, fidlist);
         return resultVO;
     }
 }
