@@ -88,21 +88,18 @@
             <if test="mStatus != null and mStatus != ''">
                 m_status=#{mStatus},
             </if>
-            <if test="relateUser != null and relateUser != ''">
+            <if test="mProgress != null and mProgress != '' and mProgress != 0">
                 m_progress=#{mProgress},
             </if>
             <if test="mStartTime != null and mStartTime != ''">
                 m_start_time=#{mStartTime},
             </if>
             <if test="mEndTime != null and mEndTime != ''">
-                m_end_time=#{mEndTime},
-            </if>
-            <if test="mProgress != null and mProgress != ''">
-                m_progress=#{mProgress}
+                m_end_time=#{mEndTime}
             </if>
         </set>
         where
-        p_id=#{pid}
+        m_id=#{mId}
     </update>
 
     <delete id="delete">
