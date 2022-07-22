@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 @Controller
 @RequestMapping("/users")
 @ResponseBody
-@Api(value = "用户管理", tags = "用户管理模块")
+@Api(value = "用户", tags = "用户")
 public class UserController {
     @Resource
     private UserService userService;
@@ -206,21 +206,21 @@ public class UserController {
         return resultVO;
     }
 
-    /**
-     * 修改手机和邮箱接口
-     *
-     * @param type
-     * @param newContact
-     * @return
-     */
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "newContact", value = "新的手机或邮箱", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "type", value = "1是邮箱2是手机", dataType = "int", paramType = "body")
-    })
-    @ApiOperation(value = "修改邮箱或手机", httpMethod = "POST")
-    @RequestMapping("/reset/contact")
-    public ResultVO resetContact(int type, String newContact) {
-
-        return null;
-    }
+//    /**
+//     * 修改手机和邮箱接口
+//     *
+//     * @param type
+//     * @param newContact
+//     * @return
+//     */
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "newContact", value = "新的手机或邮箱", dataType = "String", paramType = "body"),
+//            @ApiImplicitParam(name = "type", value = "1是邮箱2是手机", dataType = "int", paramType = "body")
+//    })
+//    @ApiOperation(value = "修改邮箱或手机", httpMethod = "POST")
+//    @RequestMapping("/reset/contact")
+//    public ResultVO resetContact(int type, String newContact) {
+//
+//        return null;
+//    }
 }

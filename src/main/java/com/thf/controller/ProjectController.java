@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 @Controller
 @RequestMapping("/project")
 @ResponseBody
-@Api(value = "项目管理",tags = "项目管理模块")
+@Api(value = "项目",tags = "项目")
 public class ProjectController {
     @Resource
     private ProjectService projectService;
