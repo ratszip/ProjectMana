@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
                             .setId(user.getUserId() + "")               //设置用户id为token  id
                             .setClaims(map)                                     //map中可以存放用户的角色权限信息
 //                            .setExpiration(calendar.getTime())
-                            .setExpiration(new Date(System.currentTimeMillis() + 20*1000))//设置token过期时间
+                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
                             .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
                             .compact();
 
