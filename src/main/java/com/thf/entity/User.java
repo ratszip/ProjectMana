@@ -16,7 +16,7 @@ public class User {
     private String username;
     @JsonIgnore
     private String password;
-    private String userIntroduce;
+    private String userIntro;
     private long registerTime;
     private String phone;
     private String email;

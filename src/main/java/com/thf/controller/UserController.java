@@ -1,9 +1,10 @@
 package com.thf.controller;
 
 import com.thf.common.GloableVar;
-import com.thf.common.utils.JwtUtil;
+import com.thf.common.oo.Res;
 import com.thf.common.utils.PMUtils;
 import com.thf.common.utils.RegExpUtils;
+import com.thf.common.utils.SendSMS;
 import com.thf.config.MultiRequestBody;
 import com.thf.common.oo.ResultVO;
 import com.thf.entity.User;
@@ -39,37 +40,34 @@ public class UserController {
     /**
      * 注册接口
      *
-     * @param phone
-     * @param email
-     * @param phone
-     * @param verifyCode
-     * @param verifyType
+     * @param key
+     * @param password
+     * @param code
+     * @param type
      * @return
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "phone", value = "手机号", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "email", value = "邮箱和手机号必填一个", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "key", value = "邮箱或手机号", dataType = "String", required = true,paramType = "body"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "verifyCode", value = "验证码", required = true, dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "verifyType", value = "1.邮箱2手机", required = true, dataType = "Integer", paramType = "body")
+            @ApiImplicitParam(name = "code", value = "验证码", required = true, dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "type", value = "1.邮箱2手机", required = true, dataType = "Integer", paramType = "body")
     })
     @ApiOperation(value = "用户注册", httpMethod = "POST")
     @RequestMapping("/register")
     public ResultVO regist(HttpServletRequest request,
-                           @MultiRequestBody String phone,
-                           @MultiRequestBody String email,
+                           @MultiRequestBody @NotNull String key,
                            @MultiRequestBody @NotNull String password,
-                           @MultiRequestBody @NotNull String verifyCode,
-                           @MultiRequestBody @NotNull Integer verifyType) {
+                           @MultiRequestBody @NotNull String code,
+                           @MultiRequestBody @NotNull Integer type) {
         HttpSession session = request.getSession();
-        String code = (String) session.getAttribute(email);
-        if (session.getAttribute(email) == null) {
-            return new ResultVO(2000, "请重新发送验证码");
+        String vcode = (String) session.getAttribute(key);
+        if (session.getAttribute(key) == null) {
+            return new ResultVO(2000, "手机或邮箱错误");
         }
-        if (!code.equals(verifyCode)) {
+        if (!code.equals(code)) {
             return new ResultVO(2000, "验证码错误");
         }
-        ResultVO resultVO = userService.userRegister(phone, email, password, verifyCode, verifyType);
+        ResultVO resultVO = userService.userRegister(key, password, vcode, type);
         return resultVO;
     }
 
@@ -101,24 +99,24 @@ public class UserController {
      * 修改个人信息
      *
      * @param username
-     * @param userIntroduce
+     * @param userIntro
      * @param userAddress
      * @return
      */
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username", value = "用户名", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "userIntroduce", value = "简介", dataType = "String", paramType = "body"),
+            @ApiImplicitParam(name = "userIntro", value = "简介", dataType = "String", paramType = "body"),
             @ApiImplicitParam(name = "userAddress", value = "地址", dataType = "String", paramType = "body"),
             @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true)
     })
     @ApiOperation(value = "修改个人资料", httpMethod = "POST")
     @RequestMapping("/update")
     public ResultVO update(@MultiRequestBody String username,
-                           @MultiRequestBody String userIntroduce,
+                           @MultiRequestBody String userIntro,
                            @MultiRequestBody String userAddress,
                            @RequestHeader String token) {
 
-        ResultVO resultVO = userService.updateInfo(username, userIntroduce, userAddress, token);
+        ResultVO resultVO = userService.updateInfo(username, userIntro, userAddress, token);
         return resultVO;
     }
 
@@ -137,31 +135,41 @@ public class UserController {
     @RequestMapping("/verifycode")
     public ResultVO sendVerifyCode(HttpServletRequest request,
                                    @MultiRequestBody @NotNull int type,
-                                   @MultiRequestBody @NotNull String email) {
+                                   @MultiRequestBody @NotNull String key) {
         String verifyCode = PMUtils.createVerifyCode(6);
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(email, verifyCode);
+        httpSession.setAttribute(key, verifyCode);
         httpSession.setMaxInactiveInterval(GloableVar.codeExTime);
-        try {
-            if (RegExpUtils.useRegexp(email.trim(), GloableVar.emailReg)) {
-                if (userService.searchUserEmail(email) == null) {
+        if(type==1) {
+            try {
+                if (RegExpUtils.useRegexp(key.trim(), GloableVar.emailReg)) {
+                    if (userService.searchUserEmail(key) == null) {
 //                    PMUtils.sendMail(email, "PMAPP验证码");
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setSubject("PMAPP验证码");
-                    message.setText("code：" + verifyCode);
-                    message.setTo(email);
-                    message.setFrom("351659704@qq.com");
-                    mailSender.send(message);
-                    return new ResultVO(2000, "验证码发送成功", null);
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setSubject("PMAPP验证码");
+                        message.setText("code：" + verifyCode);
+                        message.setTo(key);
+                        message.setFrom("351659704@qq.com");
+                        mailSender.send(message);
+                        return new ResultVO(2000, "验证码发送成功", null);
+                    } else {
+                        return new ResultVO(2000, "邮箱已注册", null);
+                    }
                 } else {
-                    return new ResultVO(2000, "邮箱已注册", null);
+                    return new ResultVO(4000, "邮箱格式错误", null);
                 }
-            } else {
-                return new ResultVO(2000, "邮箱格式错误", null);
+            } catch (MailException e) {
+                return new ResultVO(5000, "验证码发送失败", null);
             }
-        } catch (MailException e) {
-            return new ResultVO(2000, "验证码发送失败", null);
+        }else if(type==2){
+            Boolean b=SendSMS.sendSMS(verifyCode,key,GloableVar.ali_appcode);
+            if(b){
+                return Res.res(2000,"发送成功");
+            }else {
+                return Res.res(5000,"发送失败");
+            }
         }
+        return Res.res(4000,"请输入正确的type");
     }
 
 
@@ -190,7 +198,7 @@ public class UserController {
     }
 
     /**
-     * 重置密码接口
+     * 修改密码接口
      *
      * @param password
      * @return
@@ -198,11 +206,11 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header"),
             @ApiImplicitParam(name = "password", value = "新密码", dataType = "String", paramType = "body")})
-    @ApiOperation(value = "重置密码", httpMethod = "POST")
-    @RequestMapping("/reset/password")
+    @ApiOperation(value = "修改密码", httpMethod = "POST")
+    @RequestMapping("/change/password")
     public ResultVO resetPwd(@MultiRequestBody String password,
                              @RequestHeader String token) {
-        ResultVO resultVO = userService.resetPwd(password, token);
+        ResultVO resultVO = userService.changePwd(password, token);
         return resultVO;
     }
 

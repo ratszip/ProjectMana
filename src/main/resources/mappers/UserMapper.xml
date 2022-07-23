@@ -24,7 +24,7 @@
             <result column="user_type" property="userType"/>
             <result column="username" property="username"/>
             <result column="password" property="password"/>
-            <result column="user_introduce" property="userIntroduce"/>
+            <result column="user_intro" property="userIntro"/>
             <result column="register_time" property="registerTime"/>
             <result column="phone" property="phone"/>
             <result column="email" property="email"/>
@@ -58,7 +58,7 @@
         update users
         set
         username = #{username},
-        user_introduce = #{userIntroduce},
+        user_introduce = #{userIntro},
         user_address = #{userAddress}
         where
         user_id = #{userId}
