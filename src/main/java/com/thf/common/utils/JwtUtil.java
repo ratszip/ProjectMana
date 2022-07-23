@@ -1,11 +1,11 @@
 package com.thf.common.utils;
 
 import com.thf.common.GloableVar;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JwtUtil {
 
@@ -24,4 +24,28 @@ public class JwtUtil {
         return new Date(System.currentTimeMillis()).after(expiration);
     }
 
+    /**
+     * 生成token
+     * @param map
+     * @param subject
+     * @return
+     */
+    public static String generateToken(Map map, String subject,String secretKey,long exipretime){
+        JwtBuilder builder = Jwts.builder();
+
+        String token = builder.setSubject(subject)                     //主题，就是token中携带的数据
+                .setId(map.get("uid")+"")               //设置用户id为token  id
+                .setClaims(map)                                     //map中可以存放用户的角色权限信息
+                .setExpiration(new Date(System.currentTimeMillis() + exipretime))//设置token过期时间
+                .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
+                .compact();
+        return token;
+    }
+
+    public static void makeExpire(String token,long now){
+        Map map=new HashMap();
+        Claims claims=parseToken(token);
+        map.put("uid",claims.get("uid"));
+        generateToken(map,claims.getSubject(),GloableVar.unsecretKey,1);
+    }
 }

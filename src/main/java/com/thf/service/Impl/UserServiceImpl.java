@@ -80,21 +80,17 @@ public class UserServiceImpl implements UserService {
                 return Res.res(2000, "用户不存在");
             } else {
                 if (userDAO.searchPhone(key).getPassword().equals(pwd)) {
-                    JwtBuilder builder = Jwts.builder();
+//                    JwtBuilder builder = Jwts.builder();
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("id", user.getUserId());
-                    map.put("usertype", user.getUserType());
-//                    Calendar calendar = Calendar.getInstance();
-//                    calendar.add(Calendar.DATE,30);
-                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
-//                            .setIssuedAt(new Date())                            //设置token的生成时间
-                            .setId(user.getUserId() + "")               //设置用户id为token  id
-                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
-//                            .setExpiration(calendar.getTime())
-                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
-                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
-                            .compact();
-
+                    map.put("uid", user.getUserId());
+//                    map.put("usertype", user.getUserType());
+//                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
+//                            .setId(user.getUserId() + "")               //设置用户id为token  id
+//                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
+//                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
+//                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
+//                            .compact();
+                    String token=JwtUtil.generateToken(map,key,GloableVar.secretKey,GloableVar.expireTime);
                     return Res.res(2000, "登录成功", token);
                 } else {
                     return Res.res(2000, "密码错误");
@@ -105,66 +101,62 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultVO userRegister(String userPhone, String userEmail, String userPwd, String verifyCode, int verifyType) {
+    public ResultVO userRegister(String key, String userPwd, String verifyCode, int verifyType) {
         String password = userPwd.trim();
+        String regKey=key.trim();
         User user = new User();
         if (password.trim() == "") {
             return Res.res(2000, "密码不能为空", null);
-        } else if (verifyCode.trim() == "") {
+        }else if (verifyCode.trim() == "") {
             return Res.res(2000, "验证码不能为空", "");
         } else if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
             return Res.res(2000, "密码必须到8-16位数字或字母", null);
+        } else if(regKey==""){
+            return Res.res(2000, "邮箱或手机不能空", "");
         }
 
         if (verifyType == 1) {
-            String email = userEmail.trim();
-            if (email == "") {
-                return Res.res(2000, "邮箱不能空", "");
-            } else if (!RegExpUtils.useRegexp(email, GloableVar.emailReg)) {
+            if (!RegExpUtils.useRegexp(regKey, GloableVar.emailReg)) {
                 return Res.res(2000, "请输入正确的邮箱格式", null);
             }
-            user.setPhone("");
-            if (searchUserEmail(email) == null) {
-                user.setEmail(email);
+            if (searchUserEmail(regKey) == null) {
+                user.setEmail(regKey);
                 user.setPassword(password);
                 user.setRegisterTime(System.currentTimeMillis());
                 if (insertUser(user) != null) {
                     return Res.res(2000, "注册成功", null);
                 } else {
-                    return Res.res(2000, "注册失败", null);
+                    return Res.res(5000, "注册失败", null);
                 }
             } else {
                 return Res.res(2000, "用户已存在，请登录", null);
             }
         } else if (verifyType == 2) {
-            String phone = userPhone.trim();
-            if (phone == "") {
-                return Res.res(2000, "手机不能空", null);
-            } else if (!RegExpUtils.useRegexp(phone, GloableVar.phoneReg)) {
+            if (!RegExpUtils.useRegexp(regKey, GloableVar.phoneReg)) {
                 return Res.res(2000, "请输入正确的手机格式", null);
             }
-            user.setEmail("");
-            if (searchUserPhone(phone) == null) {
-                user.setPhone(phone);
+            if (searchUserPhone(regKey) == null) {
+                user.setPhone(regKey);
                 user.setPassword(password);
+                user.setRegisterTime(System.currentTimeMillis());
                 if (insertUser(user) != null) {
                     return Res.res(2000, "注册成功", null);
                 } else {
-                    return Res.res(2000, "注册失败", null);
+                    return Res.res(5000, "注册失败", null);
                 }
             } else {
                 return Res.res(2000, "用户已存在，请登录", null);
             }
         } else
-            return Res.res(2000, "verifyType有误", null);
+            return Res.res(4000, "type有误", null);
     }
 
     @Override
-    public ResultVO updateInfo(String username, String userIntroduce, String userAddress, String token) {
+    public ResultVO updateInfo(String username, String userIntro, String userAddress, String token) {
         int id = (int) JwtUtil.parseToken(token).get("id");
         User user = searchById(id);
         user.setUsername(username);
-        user.setUserIntroduce(userIntroduce);
+        user.setUserIntro(userIntro);
         user.setUserAddress(userAddress);
         if (userDAO.updateUsers(user) > 0) {
             return Res.res(2000, "资料修改成功", searchById(user.getUserId()));
@@ -179,11 +171,11 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return Res.res(2000, "无该用户信息", null);
         }
-        return Res.res(2000, "", user);
+        return Res.res(2000, "获取用户信息成功", user);
     }
 
     @Override
-    public ResultVO resetPwd(String password, String token) {
+    public ResultVO changePwd(String password, String token) {
         Integer id = (Integer) JwtUtil.parseToken(token).get("id");
         User user = searchById(id);
         String oldPwd = user.getPassword();

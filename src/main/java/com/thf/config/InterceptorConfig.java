@@ -17,7 +17,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(checkTokenInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/users/verifyCode", "/users/login", "/users/register")
+                .excludePathPatterns("/users/verifycode", "/users/login", "/users/register")
                 .excludePathPatterns("/swagger-resources/**", "/v2/**", "/swagger-ui.html/**", "/swagger-resources/**","/webjars/**","/doc.html/**");
     }
 
