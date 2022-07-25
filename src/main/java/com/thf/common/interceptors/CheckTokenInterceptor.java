@@ -7,16 +7,21 @@ import com.thf.common.GloableVar;
 import com.thf.common.oo.ResultVO;
 import com.thf.common.utils.JwtUtil;
 import io.jsonwebtoken.*;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class CheckTokenInterceptor implements HandlerInterceptor {
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -35,8 +40,16 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
                 JwtParser parser = Jwts.parser();
                 parser.setSigningKey(GloableVar.secretKey); //解析token的SigningKey必须和生成token时设置密码一致
                 //如果token正确（密码正确，有效期内）则正常执行，否则抛出异常
-                Claims claims = parser.parseClaimsJws(token).getBody();
 
+                int uid=(int)JwtUtil.parseToken(token).get("uid");
+                stringRedisTemplate.opsForValue().get(uid+"");
+                long ep=stringRedisTemplate.getExpire(uid+"", TimeUnit.MILLISECONDS);
+                long now=System.currentTimeMillis();
+                long i=ep-now;
+                if(i<0){
+                    ResultVO resultVO = new ResultVO(4003, "token已失效，请重新登录");
+                    doResponse(response, resultVO);
+                }
                 return true;
             } catch (ExpiredJwtException e) {
                 if (JwtUtil.isTokenExpired(e.getClaims())) {

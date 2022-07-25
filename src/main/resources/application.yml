@@ -25,6 +25,19 @@ spring:
           starttls:
             enable: true
             required: ture
+  redis:
+    database: 0
+    host: 106.52.174.44
+    port: 6379
+    password: 123456
+    timeout: 1000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 8000
+        max-idle: 8
+        min-idle: 0
+
 mybatis:
   mapper-locations: classpath:mappers/*Mapper.xml
   type-aliases-package: com.thf.entity
