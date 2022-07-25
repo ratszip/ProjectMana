@@ -28,7 +28,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ResultVO createProject(String token,Project project) {
-        Integer id= (Integer) JwtUtil.parseToken(token).get("id");
+        Integer id= (Integer) JwtUtil.parseToken(token).get("uid");
         project.setCreateUser(id);
         project.setCreateTime(System.currentTimeMillis());
         if(projectDAO.insertProject(project)>0){
@@ -40,7 +40,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ResultVO updateProject(String token, Project project) {
-       // Integer uid= (Integer) JwtUtil.parseToken(token).get("id");
+       // Integer uid= (Integer) JwtUtil.parseToken(token).get("uid");
        int pid= project.getProjectId();
        if(projectDAO.searchById(pid)!=null){
            if(projectDAO.updateProject(project)>0){
@@ -73,13 +73,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ResultVO deleteProject(String token, Project project) {
-        Integer id= (Integer) JwtUtil.parseToken(token).get("id");
+        Integer id= (Integer) JwtUtil.parseToken(token).get("uid");
         return null;
     }
 
     @Override
     public ResultVO getAllProject(String token) {
-        int id= (int) JwtUtil.parseToken(token).get("id");
+        int id= (int) JwtUtil.parseToken(token).get("uid");
         Project project=new Project();
         project.setCreateUser(id);
         project.setRelateUser(id);

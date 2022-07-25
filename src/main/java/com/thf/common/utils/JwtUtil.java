@@ -30,7 +30,7 @@ public class JwtUtil {
      * @param subject
      * @return
      */
-    public static String generateToken(Map map, String subject,String secretKey,long exipretime){
+    public static String generateToken(Map map, String subject,long exipretime){
         JwtBuilder builder = Jwts.builder();
 
         String token = builder.setSubject(subject)                     //主题，就是token中携带的数据
@@ -42,10 +42,4 @@ public class JwtUtil {
         return token;
     }
 
-    public static void makeExpire(String token,long now){
-        Map map=new HashMap();
-        Claims claims=parseToken(token);
-        map.put("uid",claims.get("uid"));
-        generateToken(map,claims.getSubject(),GloableVar.unsecretKey,1);
-    }
 }

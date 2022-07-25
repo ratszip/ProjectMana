@@ -11,16 +11,19 @@ import com.thf.service.UserService;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
     @Resource
     private UserDAO userDAO;
 
@@ -59,15 +62,18 @@ public class UserServiceImpl implements UserService {
                 if (userDAO.searchEmail(key).getPassword().equals(pwd)) {
                     JwtBuilder builder = Jwts.builder();
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("id", user.getUserId());
+                    map.put(user.getUserId()+"", user.getUserId()+"");
                     map.put("usertype", user.getUserType());
-                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
-                            .setIssuedAt(new Date())                            //设置token的生成时间
-                            .setId(user.getUserId() + "")               //设置用户id为token  id
-                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
-                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
-                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)     //设置加密方式和加密密码
-                            .compact();
+//                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
+//                            .setIssuedAt(new Date())                            //设置token的生成时间
+//                            .setId(user.getUserId() + "")               //设置用户id为token  id
+//                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
+//                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
+//                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)     //设置加密方式和加密密码
+//                            .compact();
+                    String token=JwtUtil.generateToken(map,key,GloableVar.expireTime);
+                    stringRedisTemplate.opsForValue().set(user.getUserId()+"",user.getUserId()+"",System.currentTimeMillis()+GloableVar.expireTime, TimeUnit.MILLISECONDS);
+
                     return Res.res(2000, "登录成功", token);
                 } else {
                     return Res.res(2000, "密码错误");
@@ -83,14 +89,15 @@ public class UserServiceImpl implements UserService {
 //                    JwtBuilder builder = Jwts.builder();
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("uid", user.getUserId());
-//                    map.put("usertype", user.getUserType());
+                    map.put("usertype", user.getUserType());
 //                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
 //                            .setId(user.getUserId() + "")               //设置用户id为token  id
 //                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
 //                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
 //                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
 //                            .compact();
-                    String token=JwtUtil.generateToken(map,key,GloableVar.secretKey,GloableVar.expireTime);
+                    String token=JwtUtil.generateToken(map,key,GloableVar.expireTime);
+                    stringRedisTemplate.opsForValue().set(user.getUserId()+"",user.getUserId()+"",System.currentTimeMillis()+GloableVar.expireTime, TimeUnit.MILLISECONDS);
                     return Res.res(2000, "登录成功", token);
                 } else {
                     return Res.res(2000, "密码错误");
@@ -153,7 +160,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO updateInfo(String username, String userIntro, String userAddress, String token) {
-        int id = (int) JwtUtil.parseToken(token).get("id");
+        int id = (int) JwtUtil.parseToken(token).get("uid");
         User user = searchById(id);
         user.setUsername(username);
         user.setUserIntro(userIntro);
@@ -166,7 +173,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO getInfo(String token) {
-        int id = (int) JwtUtil.parseToken(token).get("id");
+        int id = (int) JwtUtil.parseToken(token).get("uid");
         User user = searchById(id);
         if (user == null) {
             return Res.res(2000, "无该用户信息", null);
@@ -176,7 +183,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO changePwd(String password, String token) {
-        Integer id = (Integer) JwtUtil.parseToken(token).get("id");
+        Integer id = (Integer) JwtUtil.parseToken(token).get("uid");
         User user = searchById(id);
         String oldPwd = user.getPassword();
         if (RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
@@ -185,6 +192,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 user.setPassword(password);
                 if (userDAO.resetPassword(user) > 0) {
+                    stringRedisTemplate.expire(id+"",stringRedisTemplate.getExpire(id+"")+1,TimeUnit.MILLISECONDS);
                     return Res.res(2000, "修改成功");
                 }
             }

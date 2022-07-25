@@ -27,7 +27,7 @@ public class FunctionServiceImpl implements FunctionService {
 
     @Override
     public ResultVO createFunc(String token, int mid, Function function) {
-        int uid = (int) JwtUtil.parseToken(token).get("id");
+        int uid = (int) JwtUtil.parseToken(token).get("uid");
         Project project = new Project();
         project.setCreateUser(uid);
         List<Project> lp = null;
@@ -56,7 +56,7 @@ public class FunctionServiceImpl implements FunctionService {
 
     @Override
     public ResultVO updateFunc(String token, Function function) {
-        int uid = (int) JwtUtil.parseToken(token).get("id");
+        int uid = (int) JwtUtil.parseToken(token).get("uid");
         int mpid = moduleDAO.searchBymId(function.getMId()).getPId();
         if (projectDAO.searchById(mpid).getCreateUser() == uid) {
             if (functionDAO.update(function) > 0) {
@@ -69,7 +69,7 @@ public class FunctionServiceImpl implements FunctionService {
 
     @Override
     public ResultVO deleteFunc(String token, int[] fidArr) {
-        int uid = (int) JwtUtil.parseToken(token).get("id");
+        int uid = (int) JwtUtil.parseToken(token).get("uid");
         for (int fid:fidArr) {
             int mpid = moduleDAO.searchBymId(functionDAO.searchById(fid).getMId()).getPId();
             if (projectDAO.searchById(mpid).getCreateUser() == uid) {
