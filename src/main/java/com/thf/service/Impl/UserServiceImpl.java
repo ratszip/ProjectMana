@@ -4,19 +4,18 @@ import com.thf.common.GloableVar;
 import com.thf.common.oo.Res;
 import com.thf.common.oo.ResultVO;
 import com.thf.common.utils.JwtUtil;
+import com.thf.common.utils.RSAUtils;
 import com.thf.common.utils.RegExpUtils;
 import com.thf.dao.UserDAO;
 import com.thf.entity.User;
 import com.thf.service.UserService;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -54,26 +53,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultVO checkLogin(String key, String pwd, int type) {
         User user;
+        String passwd = null;
         if (type == 1) {
             user = userDAO.searchEmail(key);
             if (userDAO.searchEmail(key) == null) {
                 return Res.res(2000, "用户不存在");
             } else {
-                if (userDAO.searchEmail(key).getPassword().equals(pwd)) {
+                try {
+                    passwd = RSAUtils.decrypt(pwd);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Res.res(5000, "服务器密码解析错误");
+                }
+                if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmail(key).getPassword())) {
                     JwtBuilder builder = Jwts.builder();
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put(user.getUserId()+"", user.getUserId()+"");
+                    map.put(user.getUserId() + "", user.getUserId() + "");
                     map.put("usertype", user.getUserType());
-//                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
-//                            .setIssuedAt(new Date())                            //设置token的生成时间
-//                            .setId(user.getUserId() + "")               //设置用户id为token  id
-//                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
-//                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
-//                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)     //设置加密方式和加密密码
-//                            .compact();
-                    String token=JwtUtil.generateToken(map,key,GloableVar.expireTime);
-                    stringRedisTemplate.opsForValue().set(user.getUserId()+"",user.getUserId()+"",System.currentTimeMillis()+GloableVar.expireTime, TimeUnit.MILLISECONDS);
-
+                    String token = JwtUtil.generateToken(map, key, GloableVar.expireTime);
+                    stringRedisTemplate.opsForValue().set(user.getUserId() + "", user.getUserId() + "", System.currentTimeMillis() + GloableVar.expireTime, TimeUnit.MILLISECONDS);
                     return Res.res(2000, "登录成功", token);
                 } else {
                     return Res.res(2000, "密码错误");
@@ -85,19 +83,18 @@ public class UserServiceImpl implements UserService {
             if (userDAO.searchPhone(key) == null) {
                 return Res.res(2000, "用户不存在");
             } else {
-                if (userDAO.searchPhone(key).getPassword().equals(pwd)) {
-//                    JwtBuilder builder = Jwts.builder();
+                try {
+                    passwd = RSAUtils.decrypt(pwd);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Res.res(5000, "服务器密码解析错误");
+                }
+                if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmail(key).getPassword())) {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("uid", user.getUserId());
                     map.put("usertype", user.getUserType());
-//                    String token = builder.setSubject(key)                     //主题，就是token中携带的数据
-//                            .setId(user.getUserId() + "")               //设置用户id为token  id
-//                            .setClaims(map)                                     //map中可以存放用户的角色权限信息
-//                            .setExpiration(new Date(System.currentTimeMillis() + GloableVar.expireTime))//设置token过期时间
-//                            .signWith(SignatureAlgorithm.HS256, GloableVar.secretKey)
-//                            .compact();
-                    String token=JwtUtil.generateToken(map,key,GloableVar.expireTime);
-                    stringRedisTemplate.opsForValue().set(user.getUserId()+"",user.getUserId()+"",System.currentTimeMillis()+GloableVar.expireTime, TimeUnit.MILLISECONDS);
+                    String token = JwtUtil.generateToken(map, key, GloableVar.expireTime);
+                    stringRedisTemplate.opsForValue().set(user.getUserId() + "", user.getUserId() + "", System.currentTimeMillis() + GloableVar.expireTime, TimeUnit.MILLISECONDS);
                     return Res.res(2000, "登录成功", token);
                 } else {
                     return Res.res(2000, "密码错误");
@@ -110,15 +107,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultVO userRegister(String key, String userPwd, String verifyCode, int verifyType) {
         String password = userPwd.trim();
-        String regKey=key.trim();
+        String regKey = key.trim();
         User user = new User();
         if (password.trim() == "") {
             return Res.res(2000, "密码不能为空", null);
-        }else if (verifyCode.trim() == "") {
+        } else if (verifyCode.trim() == "") {
             return Res.res(2000, "验证码不能为空", "");
-        } else if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
-            return Res.res(2000, "密码必须到8-16位数字或字母", null);
-        } else if(regKey==""){
+        } else if (regKey == "") {
             return Res.res(2000, "邮箱或手机不能空", "");
         }
 
@@ -128,9 +123,20 @@ public class UserServiceImpl implements UserService {
             }
             if (searchUserEmail(regKey) == null) {
                 user.setEmail(regKey);
+                try {
+                    password = RSAUtils.decrypt(password);
+                    if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
+                        return Res.res(2000, "密码必须到8-16位数字或字母", null);
+                    }
+                    password = new BCryptPasswordEncoder().encode(password);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Res.res(5000, "服务器密码处理异常");
+                }
                 user.setPassword(password);
                 user.setRegisterTime(System.currentTimeMillis());
                 if (insertUser(user) != null) {
+
                     return Res.res(2000, "注册成功", null);
                 } else {
                     return Res.res(5000, "注册失败", null);
@@ -144,6 +150,16 @@ public class UserServiceImpl implements UserService {
             }
             if (searchUserPhone(regKey) == null) {
                 user.setPhone(regKey);
+                try {
+                    password = RSAUtils.decrypt(password);
+                    if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
+                        return Res.res(2000, "密码必须到8-16位数字或字母", null);
+                    }
+                    password = new BCryptPasswordEncoder().encode(password);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Res.res(5000, "服务器密码处理异常");
+                }
                 user.setPassword(password);
                 user.setRegisterTime(System.currentTimeMillis());
                 if (insertUser(user) != null) {
@@ -186,18 +202,23 @@ public class UserServiceImpl implements UserService {
         Integer id = (Integer) JwtUtil.parseToken(token).get("uid");
         User user = searchById(id);
         String oldPwd = user.getPassword();
-        if (RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
-            if (oldPwd.equals(password)) {
-                return Res.res(2000, "新密码与旧密码不能相同");
-            } else {
-                user.setPassword(password);
-                if (userDAO.resetPassword(user) > 0) {
-                    stringRedisTemplate.expire(id+"",stringRedisTemplate.getExpire(id+"")+1,TimeUnit.MILLISECONDS);
-                    return Res.res(2000, "修改成功");
-                }
+        try {
+            password = RSAUtils.decrypt(password);
+            if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
+                return Res.res(2000, "密码必须到8-16位数字和字母", null);
             }
-        }else {
-            return Res.res(2000, "密码必须为为8-16位数字字母组合");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Res.res(5000, "服务器处理异常");
+        }
+        if (!new BCryptPasswordEncoder().matches(password, oldPwd)) {
+            return Res.res(2000, "新密码与旧密码不能相同");
+        } else {
+            user.setPassword(password);
+            if (userDAO.resetPassword(user) > 0) {
+                stringRedisTemplate.expire(id + "", stringRedisTemplate.getExpire(id + "") + 1, TimeUnit.MILLISECONDS);
+                return Res.res(2000, "修改成功");
+            }
         }
         return Res.res(5000, "未知错误");
     }
