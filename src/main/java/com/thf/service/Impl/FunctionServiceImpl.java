@@ -26,8 +26,8 @@ public class FunctionServiceImpl implements FunctionService {
     ModuleDAO moduleDAO;
 
     @Override
-    public ResultVO createFunc(String token, int mid, Function function) {
-        int uid = (int) JwtUtil.parseToken(token).get("uid");
+    public ResultVO createFunc(String token, long mid, Function function) {
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
         Project project = new Project();
         project.setCreateUser(uid);
         List<Project> lp = null;
@@ -56,8 +56,8 @@ public class FunctionServiceImpl implements FunctionService {
 
     @Override
     public ResultVO updateFunc(String token, Function function) {
-        int uid = (int) JwtUtil.parseToken(token).get("uid");
-        int mpid = moduleDAO.searchBymId(function.getMId()).getPId();
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        long mpid = moduleDAO.searchBymId(function.getMId()).getPId();
         if (projectDAO.searchById(mpid).getCreateUser() == uid) {
             if (functionDAO.update(function) > 0) {
                 return Res.res(2000, "修改成功", functionDAO.searchById(function.getFId()));
@@ -68,10 +68,10 @@ public class FunctionServiceImpl implements FunctionService {
     }
 
     @Override
-    public ResultVO deleteFunc(String token, int[] fidArr) {
-        int uid = (int) JwtUtil.parseToken(token).get("uid");
-        for (int fid:fidArr) {
-            int mpid = moduleDAO.searchBymId(functionDAO.searchById(fid).getMId()).getPId();
+    public ResultVO deleteFunc(String token, long[] fidArr) {
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        for (long fid:fidArr) {
+            long mpid = moduleDAO.searchBymId(functionDAO.searchById(fid).getMId()).getPId();
             if (projectDAO.searchById(mpid).getCreateUser() == uid) {
                 functionDAO.delete(fid);
                     if(fidArr[fidArr.length-1]==fid) {
@@ -83,7 +83,7 @@ public class FunctionServiceImpl implements FunctionService {
     }
 
     @Override
-    public ResultVO searchFunc(int fid) {
+    public ResultVO searchFunc(long fid) {
         Function f = functionDAO.searchById(fid);
         if (f != null) {
             return Res.res(2000, "搜索成功", f);

@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface ModuleDAO {
     int insert(Module module);
-    Module searchBymId(int id);
-    List<Module> searchAllModule(int pid);
+    Module searchBymId(long id);
+    List<Module> searchAllModule(long pid);
     int update(Module module);
-    int delete(int id);
+    int delete(long id);
 }

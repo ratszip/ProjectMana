@@ -11,13 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Project {
-    private int projectId;
+    private long projectId;
     private String projectName;
     private String describe;
     private int projectStatus;
-    private int createUser;
+    private long createUser;
     private long createTime;
-    private int relateUser;
+    private long relateUser;
     private long startTime;
     private long endTime;
     private int progress;

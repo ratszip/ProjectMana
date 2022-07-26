@@ -41,7 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ResultVO updateProject(String token, Project project) {
        // Integer uid= (Integer) JwtUtil.parseToken(token).get("uid");
-       int pid= project.getProjectId();
+       long pid= project.getProjectId();
        if(projectDAO.searchById(pid)!=null){
            if(projectDAO.updateProject(project)>0){
                Project pro= projectDAO.searchById(pid);
@@ -53,7 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResultVO searchById(int id) {
+    public ResultVO searchById(long id) {
         Project project=projectDAO.searchById(id);
         if(project!=null){
             return Res.res(2000,"搜索成功",project);
@@ -79,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ResultVO getAllProject(String token) {
-        int id= (int) JwtUtil.parseToken(token).get("uid");
+        long id= (long) JwtUtil.parseToken(token).get("uid");
         Project project=new Project();
         project.setCreateUser(id);
         project.setRelateUser(id);

@@ -25,8 +25,8 @@ public class ModuleServiceImpl implements ModuleService {
     FunctionDAO functionDAO;
 
     @Override
-    public ResultVO createModule(String token, int pid, Module module) {
-        int uid = (int) JwtUtil.parseToken(token).get("uid");
+    public ResultVO createModule(String token, long pid, Module module) {
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
         Project project = new Project();
         project.setCreateUser(uid);
         List<Project> lp = projectDAO.getAllProject(project);
@@ -50,7 +50,7 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Override
     public ResultVO updateModule(String token, Module module) {
-        int uid = (int) JwtUtil.parseToken(token).get("uid");
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
         if (projectDAO.searchById(module.getPId()).getCreateUser() == uid) {
             if (moduleDAO.update(module) > 0) {
                 return Res.res(2000, "修改成功", moduleDAO.searchBymId(module.getMId()));
@@ -61,11 +61,11 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     @Override
-    public ResultVO deleteModule(String token, int[] midArr) {
-        int uid = (int) JwtUtil.parseToken(token).get("uid");
-        for (int mid : midArr) {
+    public ResultVO deleteModule(String token, long[] midArr) {
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        for (long mid : midArr) {
             Project project = projectDAO.searchById(moduleDAO.searchBymId(mid).getPId());
-            int uiid = project.getCreateUser();
+            long uiid = project.getCreateUser();
             if (uiid == uid) {
                 functionDAO.deleteAll(mid);
                 moduleDAO.delete(mid);
@@ -79,7 +79,7 @@ public class ModuleServiceImpl implements ModuleService {
 
 
     @Override
-    public ResultVO searchById(int mid) {
+    public ResultVO searchById(long mid) {
         Module module = moduleDAO.searchBymId(mid);
         if (module != null) {
             return Res.res(2000, "成功", module);

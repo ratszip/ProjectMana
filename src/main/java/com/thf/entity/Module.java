@@ -10,15 +10,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Module {
-    private Integer mId;
+    private Long mId;
     private String mName;
     private String mDes;
     private Integer mStatus;
     private Integer mProgress;
-    private long mStartTime;
-    private long mEndTime;
-    private Integer pId;
-    private long mActTime;
-    private long mCreateTime;
+    private Long mStartTime;
+    private Long mEndTime;
+    private Long pId;
+    private Long mActTime;
+    private Long mCreateTime;
     List<Function> functionList;
 }
