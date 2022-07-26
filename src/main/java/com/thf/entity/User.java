@@ -11,7 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class User {
-    private Integer userId;
+    private Long userId;
     private Integer userType;
     private String username;
     @JsonIgnore

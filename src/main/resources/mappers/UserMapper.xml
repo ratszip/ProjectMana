@@ -19,18 +19,18 @@
         #{password},#{registerTime})
     </insert>
 
-        <resultMap type="User" id="userMap">
-            <id column="user_id" property="userId"/>
-            <result column="user_type" property="userType"/>
-            <result column="username" property="username"/>
-            <result column="password" property="password"/>
-            <result column="user_intro" property="userIntro"/>
-            <result column="register_time" property="registerTime"/>
-            <result column="phone" property="phone"/>
-            <result column="email" property="email"/>
-            <result column="user_address" property="userAddress"/>
-            <result column="user_img" property="userImg"/>
-        </resultMap>
+    <resultMap type="User" id="userMap">
+        <id column="user_id" property="userId"/>
+        <result column="user_type" property="userType"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="user_intro" property="userIntro"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="user_address" property="userAddress"/>
+        <result column="user_img" property="userImg"/>
+    </resultMap>
 
     <select id="searchEmail" resultMap="userMap">
         select
@@ -77,4 +77,18 @@
         where
         user_id = #{userId}
     </select>
+    <update id="resetContact">
+        UPDATE users
+        <set>
+            <if test="email != null and email!=''">
+                email=#{email},
+            </if>
+            <if test="phone != null and phone!=''">
+                and phone=#{phone}
+            </if>
+        </set>
+
+        WHERE
+        user_id=#{userId}
+    </update>
 </mapper>

@@ -57,7 +57,7 @@ public class ProjectController {
     @ApiImplicitParam(name="id",value ="id搜索",dataType = "Integer",paramType = "body")
     @ApiOperation(value = "搜索项目",httpMethod = "POST")
     @RequestMapping("/searchid")
-    public ResultVO searcByid(@MultiRequestBody int id){
+    public ResultVO searcByid(@MultiRequestBody long id){
         return projectService.searchById(id);
     }
 

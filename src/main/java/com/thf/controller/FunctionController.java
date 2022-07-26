@@ -62,7 +62,7 @@ public class FunctionController {
     @ApiOperation(value = "删除功能", httpMethod = "POST")
     @RequestMapping("/delete")
     public ResultVO deleteFunction(@RequestHeader String token,
-                                   @ApiIgnore @MultiRequestBody int[] fidArr) {
+                                   @ApiIgnore @MultiRequestBody long[] fidArr) {
         ResultVO resultVO = functionService.deleteFunc(token, fidArr);
         return resultVO;
     }

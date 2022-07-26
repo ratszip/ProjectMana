@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     StringRedisTemplate stringRedisTemplate;
     @Resource
-    private UserDAO userDAO;
+    UserDAO userDAO;
 
     public User insertUser(User user) {
         int i = userDAO.insertUser(user);
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User searchById(int userId) {
+    public User searchById(long userId) {
         return userDAO.searchById(userId);
     }
 
@@ -63,12 +63,11 @@ public class UserServiceImpl implements UserService {
                     passwd = RSAUtils.decrypt(pwd);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Res.res(5000, "服务器密码解析错误");
+                    return Res.res(5000, "服务器密码解析错误");
                 }
               String oldpass= userDAO.searchEmail(key).getPassword();
                 Boolean b=new BCryptPasswordEncoder().matches(passwd, oldpass);
                 if (b) {
-                    JwtBuilder builder = Jwts.builder();
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("uid", user.getUserId());
                     map.put("usertype", user.getUserType());
@@ -89,7 +88,7 @@ public class UserServiceImpl implements UserService {
                     passwd = RSAUtils.decrypt(pwd);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Res.res(5000, "服务器密码解析错误");
+                   return Res.res(5000, "服务器密码解析错误");
                 }
                 if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmail(key).getPassword())) {
                     HashMap<String, Object> map = new HashMap<>();
@@ -112,11 +111,11 @@ public class UserServiceImpl implements UserService {
         String regKey = key.trim();
         User user = new User();
         if (password.trim() == "") {
-            return Res.res(2000, "密码不能为空", null);
+            return Res.res(2000, "密码不能为空");
         } else if (verifyCode.trim() == "") {
-            return Res.res(2000, "验证码不能为空", "");
+            return Res.res(2000, "验证码不能为空");
         } else if (regKey == "") {
-            return Res.res(2000, "邮箱或手机不能空", "");
+            return Res.res(2000, "邮箱或手机不能空");
         }
 
         if (verifyType == 1) {
@@ -133,7 +132,7 @@ public class UserServiceImpl implements UserService {
                     password = new BCryptPasswordEncoder().encode(password);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Res.res(5000, "服务器密码处理异常");
+                  return Res.res(5000, "服务器密码处理异常");
                 }
                 user.setPassword(password);
                 user.setRegisterTime(System.currentTimeMillis());
@@ -159,7 +158,7 @@ public class UserServiceImpl implements UserService {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Res.res(5000, "服务器密码处理异常");
+                    return Res.res(5000, "服务器密码处理异常");
                 }
                 password = new BCryptPasswordEncoder().encode(password);
                 user.setPassword(password);
@@ -178,7 +177,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO updateInfo(String username, String userIntro, String userAddress, String token) {
-        int id = (int) JwtUtil.parseToken(token).get("uid");
+        long id = (long) JwtUtil.parseToken(token).get("uid");
         User user = searchById(id);
         user.setUsername(username);
         user.setUserIntro(userIntro);
@@ -191,10 +190,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO getInfo(String token) {
-        int id = (int) JwtUtil.parseToken(token).get("uid");
+        long id = (long) JwtUtil.parseToken(token).get("uid");
         User user = searchById(id);
         if (user == null) {
-            return Res.res(2000, "无该用户信息", null);
+            return Res.res(2000, "无该用户信息");
         }
         return Res.res(2000, "获取用户信息成功", user);
     }
@@ -211,7 +210,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Res.res(5000, "服务器处理异常");
+           return Res.res(5000, "服务器处理异常");
         }
         if (new BCryptPasswordEncoder().matches(password, oldPwd)) {
             return Res.res(2000, "新密码与旧密码不能相同");
@@ -224,5 +223,35 @@ public class UserServiceImpl implements UserService {
             }
         }
         return Res.res(5000, "未知错误");
+    }
+
+    @Override
+    public ResultVO resetContact(String token, int type, String key) {
+        long uid=(long)JwtUtil.parseToken(token).get("uid");
+        User user=new User();
+        user.setUserId(uid);
+        if (type==1){
+            if (userDAO.searchEmail(key)!=null){
+               return Res.res(4000,"该邮箱已绑定过账号");
+            }
+            if(RegExpUtils.useRegexp(key,GloableVar.emailReg)) {
+                user.setEmail(key);
+                userDAO.resetContact(user);
+               return Res.res(2000,"修改成功",userDAO.searchById(uid));
+            }else {
+                return Res.res(4000,"邮箱格式有误");
+            }
+        }else if (type==2){
+            if (userDAO.searchPhone(key)!=null){
+               return Res.res(4000,"该手机号已绑定了账号");
+            }
+            if (RegExpUtils.useRegexp(key,GloableVar.phoneReg)){
+               return Res.res(2000,"修改成功",userDAO.searchById(uid));
+            }else {
+                return Res.res(4000,"手机格式有误");
+            }
+        }
+
+        return Res.res(4000,"type错误");
     }
 }

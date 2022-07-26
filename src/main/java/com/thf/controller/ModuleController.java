@@ -60,7 +60,7 @@ public class ModuleController {
     @ApiOperation(value = "删除模块", httpMethod = "POST")
     @RequestMapping("/delete")
     public ResultVO deleteModule(@RequestHeader String token,
-                                   @ApiIgnore @MultiRequestBody int[] midArr) {
+                                   @ApiIgnore @MultiRequestBody long[] midArr) {
         ResultVO resultVO = moduleService.deleteModule(token,midArr);
         return resultVO;
     }
