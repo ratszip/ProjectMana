@@ -61,7 +61,7 @@ public class UserController {
         HttpSession session = request.getSession();
         String vcode = (String) session.getAttribute(key);
         if (session.getAttribute(key) == null) {
-            return new ResultVO(2000, "手机或邮箱错误");
+            return new ResultVO(4000, "验证码过期,请重新发送");
         }
         if (!code.equals(code)) {
             return new ResultVO(2000, "验证码错误");
@@ -146,7 +146,7 @@ public class UserController {
 //                    PMUtils.sendMail(email, "PMAPP验证码");
                         SimpleMailMessage message = new SimpleMailMessage();
                         message.setSubject("PMAPP验证码");
-                        message.setText("code：" + verifyCode);
+                        message.setText("验证码为：" + verifyCode+"，5分钟内有效，请勿向他人泄露验证码信息");
                         message.setTo(key);
                         message.setFrom("351659704@qq.com");
                         mailSender.send(message);
