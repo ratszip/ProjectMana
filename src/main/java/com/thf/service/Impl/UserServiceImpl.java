@@ -176,21 +176,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultVO updateInfo(String username, String userIntro, String userAddress, String token) {
-        long id = (long) JwtUtil.parseToken(token).get("uid");
-        User user = searchById(id);
-        user.setUsername(username);
-        user.setUserIntro(userIntro);
-        user.setUserAddress(userAddress);
-        if (userDAO.updateUsers(user) > 0) {
-            return Res.res(2000, "资料修改成功", searchById(user.getUserId()));
+    public ResultVO updateInfo(User user, String token) {
+        Long id = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
+        User userod = searchById(id);
+        userod.setUsername(user.getUsername());
+        userod.setUserIntro(user.getUserIntro());
+        userod.setAddress(user.getAddress());
+        userod.setGender(user.getGender());
+        if (userDAO.updateUsers(userod) > 0) {
+            return Res.res(2000, "资料修改成功", searchById(userod.getUserId()));
         }
         return Res.res(5000, "更新失败");
     }
 
     @Override
     public ResultVO getInfo(String token) {
-        long id = (long) JwtUtil.parseToken(token).get("uid");
+        long id = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
         User user = searchById(id);
         if (user == null) {
             return Res.res(2000, "无该用户信息");

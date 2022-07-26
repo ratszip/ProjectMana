@@ -95,27 +95,25 @@ public class UserController {
 
 
     /**
-     * 修改个人信息
-     *
-     * @param username
-     * @param userIntro
-     * @param userAddress
+     * 修改个人资料
+     * @param user
+     * @param token
      * @return
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "userIntro", value = "简介", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "userAddress", value = "地址", dataType = "String", paramType = "body"),
-            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true)
+            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true),
+            @ApiImplicitParam(name = "username", value = "用户名", dataType = "String", paramType = "body",required = false),
+            @ApiImplicitParam(name = "userIntro", value = "简介", dataType = "String", paramType = "body",required = false),
+            @ApiImplicitParam(name = "address", value = "地址", dataType = "String", paramType = "body",required = false),
+            @ApiImplicitParam(name = "gender", value = "性别", dataType = "int", paramType = "body",required = false),
+            @ApiImplicitParam(name = "career", value = "职业", dataType = "String", paramType = "body",required = false)
     })
     @ApiOperation(value = "修改个人资料", httpMethod = "POST")
     @RequestMapping("/update")
-    public ResultVO update(@MultiRequestBody String username,
-                           @MultiRequestBody String userIntro,
-                           @MultiRequestBody String userAddress,
+    public ResultVO update(@MultiRequestBody User user,
                            @RequestHeader String token) {
 
-        ResultVO resultVO = userService.updateInfo(username, userIntro, userAddress, token);
+        ResultVO resultVO = userService.updateInfo(user,token);
         return resultVO;
     }
 

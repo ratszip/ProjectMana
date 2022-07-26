@@ -14,7 +14,7 @@ public interface UserService {
     //用户注册
     ResultVO userRegister(String key,String userPwd,String verifyCode, int verifyType);
     //修改资料
-    ResultVO updateInfo(String userName, String userIntro, String userAddress,String token);
+    ResultVO updateInfo(User user,String token);
     //获取用户信息
     ResultVO getInfo(String token);
     //重置密码

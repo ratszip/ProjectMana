@@ -16,10 +16,12 @@ public class User {
     private String username;
     @JsonIgnore
     private String password;
+    private Integer gender;
     private String userIntro;
-    private long registerTime;
+    private Long registerTime;
     private String phone;
     private String email;
-    private String userAddress;
+    private String address;
     private String userImg;
+    private String career;
 }

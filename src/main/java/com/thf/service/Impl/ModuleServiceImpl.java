@@ -26,7 +26,7 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Override
     public ResultVO createModule(String token, long pid, Module module) {
-        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        long uid =  ((Number)JwtUtil.parseToken(token).get("uid")).longValue();
         Project project = new Project();
         project.setCreateUser(uid);
         List<Project> lp = projectDAO.getAllProject(project);
@@ -50,7 +50,7 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Override
     public ResultVO updateModule(String token, Module module) {
-        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        long uid =  ((Number)JwtUtil.parseToken(token).get("uid")).longValue();
         if (projectDAO.searchById(module.getPId()).getCreateUser() == uid) {
             if (moduleDAO.update(module) > 0) {
                 return Res.res(2000, "修改成功", moduleDAO.searchBymId(module.getMId()));
@@ -62,7 +62,7 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Override
     public ResultVO deleteModule(String token, long[] midArr) {
-        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        long uid =  ((Number)JwtUtil.parseToken(token).get("uid")).longValue();
         for (long mid : midArr) {
             Project project = projectDAO.searchById(moduleDAO.searchBymId(mid).getPId());
             long uiid = project.getCreateUser();
