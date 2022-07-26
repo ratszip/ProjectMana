@@ -26,11 +26,12 @@ import java.util.Map;
 public class RSAUtils
 {
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(encrypt("1234567a",publicKey));
-        System.out.println(decrypt("INiZpUmUFW2dG1AP8ZOGzJhUBjshtY5uH8t6vaoL1Qk0uzIIuuVoqZLU1N8UIrewBQ7ARm3bL3TdheHAsZnHKHQsKlFQgf7hrtq5owaKM9n5K9clGtSgfs+kOyWQiVA5arPyuLR68UJq3tKnRSObT5PCmN3irSefBN4BkC2yypc="));
-    }
-    static String publicKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZ6PSpdV0ORwjzDHRNlpGnkE63LVHmdR0FHwHSUHdVAsO7Gfd3LdAAUN8HzXgrhX+lk7wcR40+/BHkb1Be7mrS80TiadsPEIYRzRXB71btBfy2kLiZGgUK0NEqarAhtzcqeBoD2FHZ8mehbHGL6Fa+IafNjWajY8jQsa+wjzOdwQIDAQAB";
+//    public static void main(String[] args) throws Exception {
+//        String pwd=encrypt("1209yy8aa",publicKey);
+//        System.out.println(pwd);
+//        System.out.println(decrypt(pwd));
+//    }
+    public static String publicKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZ6PSpdV0ORwjzDHRNlpGnkE63LVHmdR0FHwHSUHdVAsO7Gfd3LdAAUN8HzXgrhX+lk7wcR40+/BHkb1Be7mrS80TiadsPEIYRzRXB71btBfy2kLiZGgUK0NEqarAhtzcqeBoD2FHZ8mehbHGL6Fa+IafNjWajY8jQsa+wjzOdwQIDAQAB";
    public static String privateKey="MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJno9Kl1XQ5HCPMMdE2WkaeQTrctUeZ1HQUfAdJQd1UCw7sZ93ct0ABQ3wfNeCuFf6WTvBxHjT78EeRvUF7uatLzROJp2w8QhhHNFcHvVu0F/LaQuJkaBQrQ0SpqsCG3Nyp4GgPYUdnyZ6FscYvoVr4hp82NZqNjyNCxr7CPM53BAgMBAAECgYEAh7unkY78iyvgW6CfLRHd0H32vZsNQIYGGs8WpyjppKI0hdxHnuZbKvwnRVVSZmdshFS+r932VhatnN0Cb0YqFBOcAB2l6bQOnyTeLhOC/Gzb5r+fCTuLPHzh8I8KEkOBOMX0lHZ6NM8Ubxf41nEK6HOXkkor2vg/Qw7U8mNN2fECQQDPeIgUfMN7WnXbveqdYYmBiiGj/W9VMTxIGgPcsuYoZ6LGM7OSR0oP2FkISoocczSCDfGnsUI7q7eAZ55s3+QtAkEAvekry+IEOhSX+NBcyz3CYDgLwGY0mtKBIa8Ge3IDnQEgyc60HTWEHpkEgYukqYQUZBxtIE2S7H6LxgavQf/4ZQJAP9SCcWMtNU9QgWm9u+vdRVh9HxoC3cAHHtu6InV78CRqZPZVIgUC2TsjsTRVp4keN4EYvxH/IaKkE0JN8Is1hQJASxQEeXzn+OItVnNhTAQldQ6TLsP5Jf/0hxF/uYvQe+B3SvEJ6cY/bi1GR8SiG1YZDZ7jUXL5k79PmMEJxkjgtQJBAMTPvHrRGcpYArJhL9F0hxzx89eHvj4HTaLRg5iMJiX8pgz+vXguBW8gLoL1KU8Kst4ya+5F3JlwzOAW/38PXE0=";
     /**
      * 随机生成密钥对
@@ -90,10 +91,7 @@ public class RSAUtils
     /**
      * RSA私钥解密
      *
-     * @param str
-     *            加密字符串
-     * @param privateKey
-     *            私钥
+     * @param str 加密字符串
      * @return 铭文
      * @throws Exception
      *             解密过程中的异常信息

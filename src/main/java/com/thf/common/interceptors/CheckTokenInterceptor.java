@@ -41,12 +41,15 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
                 parser.setSigningKey(GloableVar.secretKey); //解析token的SigningKey必须和生成token时设置密码一致
                 //如果token正确（密码正确，有效期内）则正常执行，否则抛出异常
 
-                int uid=(int)JwtUtil.parseToken(token).get("uid");
-                stringRedisTemplate.opsForValue().get(uid+"");
-                long ep=stringRedisTemplate.getExpire(uid+"", TimeUnit.MILLISECONDS);
-                long now=System.currentTimeMillis();
-                long i=ep-now;
-                if(i<0){
+                int uid = (int) JwtUtil.parseToken(token).get("uid");
+                if(stringRedisTemplate.opsForValue().get(uid + "")==null){
+                    ResultVO resultVO = new ResultVO(4003, "token已失效，请重新登录");
+                    doResponse(response, resultVO);
+                }
+                long ep = stringRedisTemplate.getExpire(uid + "", TimeUnit.MILLISECONDS);
+                long now = System.currentTimeMillis();
+                long i = ep - now;
+                if (i < 0) {
                     ResultVO resultVO = new ResultVO(4003, "token已失效，请重新登录");
                     doResponse(response, resultVO);
                 }

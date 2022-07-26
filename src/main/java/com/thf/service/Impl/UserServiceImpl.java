@@ -65,10 +65,12 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                     Res.res(5000, "服务器密码解析错误");
                 }
-                if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmail(key).getPassword())) {
+              String oldpass= userDAO.searchEmail(key).getPassword();
+                Boolean b=new BCryptPasswordEncoder().matches(passwd, oldpass);
+                if (b) {
                     JwtBuilder builder = Jwts.builder();
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put(user.getUserId() + "", user.getUserId() + "");
+                    map.put("uid", user.getUserId());
                     map.put("usertype", user.getUserType());
                     String token = JwtUtil.generateToken(map, key, GloableVar.expireTime);
                     stringRedisTemplate.opsForValue().set(user.getUserId() + "", user.getUserId() + "", System.currentTimeMillis() + GloableVar.expireTime, TimeUnit.MILLISECONDS);
@@ -155,11 +157,11 @@ public class UserServiceImpl implements UserService {
                     if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
                         return Res.res(2000, "密码必须到8-16位数字或字母", null);
                     }
-                    password = new BCryptPasswordEncoder().encode(password);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Res.res(5000, "服务器密码处理异常");
                 }
+                password = new BCryptPasswordEncoder().encode(password);
                 user.setPassword(password);
                 user.setRegisterTime(System.currentTimeMillis());
                 if (insertUser(user) != null) {
@@ -211,9 +213,10 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             Res.res(5000, "服务器处理异常");
         }
-        if (!new BCryptPasswordEncoder().matches(password, oldPwd)) {
+        if (new BCryptPasswordEncoder().matches(password, oldPwd)) {
             return Res.res(2000, "新密码与旧密码不能相同");
         } else {
+            password=new BCryptPasswordEncoder().encode(password);
             user.setPassword(password);
             if (userDAO.resetPassword(user) > 0) {
                 stringRedisTemplate.expire(id + "", stringRedisTemplate.getExpire(id + "") + 1, TimeUnit.MILLISECONDS);
