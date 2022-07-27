@@ -21,4 +21,6 @@ public interface UserService {
     ResultVO changePwd(String password,String token);
     //重置手机或邮箱
     ResultVO resetContact(String header,int type,String key);
+
+    ResultVO resetPwd(String key, int type, String password);
 }

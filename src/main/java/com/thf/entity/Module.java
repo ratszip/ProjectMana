@@ -18,7 +18,9 @@ public class Module {
     private Long mStartTime;
     private Long mEndTime;
     private Long pId;
-    private Long mActTime;
+    private Long mActEndTime;
     private Long mCreateTime;
+    private Long mCreateUser;
+    private Long mRelateUser;
     List<Function> functionList;
 }

@@ -29,7 +29,7 @@ public class ModuleServiceImpl implements ModuleService {
         long uid =  ((Number)JwtUtil.parseToken(token).get("uid")).longValue();
         Project project = new Project();
         project.setCreateUser(uid);
-        List<Project> lp = projectDAO.getAllProject(project);
+        List<Project> lp = projectDAO.getAllProjectDet(project);
         if (lp == null) {
             Res.res(2000, "请先建立项目");
         } else {

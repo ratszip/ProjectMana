@@ -27,7 +27,7 @@ public class RSAUtils
 {
 
 //    public static void main(String[] args) throws Exception {
-//        String pwd=encrypt("1209yy8aa",publicKey);
+//        String pwd=encrypt("1054rt990",publicKey);
 //        System.out.println(pwd);
 //        System.out.println(decrypt(pwd));
 //    }
