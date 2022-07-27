@@ -65,8 +65,8 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                     return Res.res(5000, "服务器密码解析错误");
                 }
-              String oldpass= userDAO.searchEmail(key).getPassword();
-                Boolean b=new BCryptPasswordEncoder().matches(passwd, oldpass);
+                String oldpass = userDAO.searchEmail(key).getPassword();
+                Boolean b = new BCryptPasswordEncoder().matches(passwd, oldpass);
                 if (b) {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("uid", user.getUserId());
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
                     passwd = RSAUtils.decrypt(pwd);
                 } catch (Exception e) {
                     e.printStackTrace();
-                   return Res.res(5000, "服务器密码解析错误");
+                    return Res.res(5000, "服务器密码解析错误");
                 }
                 if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmail(key).getPassword())) {
                     HashMap<String, Object> map = new HashMap<>();
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
                     password = new BCryptPasswordEncoder().encode(password);
                 } catch (Exception e) {
                     e.printStackTrace();
-                  return Res.res(5000, "服务器密码处理异常");
+                    return Res.res(5000, "服务器密码处理异常");
                 }
                 user.setPassword(password);
                 user.setRegisterTime(System.currentTimeMillis());
@@ -211,15 +211,17 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-           return Res.res(5000, "服务器处理异常");
+            return Res.res(5000, "服务器处理异常");
         }
         if (new BCryptPasswordEncoder().matches(password, oldPwd)) {
             return Res.res(2000, "新密码与旧密码不能相同");
         } else {
-            password=new BCryptPasswordEncoder().encode(password);
+            password = new BCryptPasswordEncoder().encode(password);
             user.setPassword(password);
             if (userDAO.resetPassword(user) > 0) {
-                stringRedisTemplate.expire(id + "", stringRedisTemplate.getExpire(id + "") + 1, TimeUnit.MILLISECONDS);
+                if (stringRedisTemplate.opsForValue().get(id + "") != null) {
+                    stringRedisTemplate.expire(id + "", stringRedisTemplate.getExpire(id + "") + 1, TimeUnit.MILLISECONDS);
+                }
                 return Res.res(2000, "修改成功");
             }
         }
@@ -228,31 +230,69 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO resetContact(String token, int type, String key) {
-        long uid=(long)JwtUtil.parseToken(token).get("uid");
-        User user=new User();
+        long uid = (long) JwtUtil.parseToken(token).get("uid");
+        User user = new User();
         user.setUserId(uid);
-        if (type==1){
-            if (userDAO.searchEmail(key)!=null){
-               return Res.res(4000,"该邮箱已绑定过账号");
+        if (type == 1) {
+            if (userDAO.searchEmail(key) != null) {
+                return Res.res(4000, "该邮箱已绑定过账号");
             }
-            if(RegExpUtils.useRegexp(key,GloableVar.emailReg)) {
+            if (RegExpUtils.useRegexp(key, GloableVar.emailReg)) {
                 user.setEmail(key);
                 userDAO.resetContact(user);
-               return Res.res(2000,"修改成功",userDAO.searchById(uid));
-            }else {
-                return Res.res(4000,"邮箱格式有误");
+                return Res.res(2000, "修改成功", userDAO.searchById(uid));
+            } else {
+                return Res.res(4000, "邮箱格式有误");
             }
-        }else if (type==2){
-            if (userDAO.searchPhone(key)!=null){
-               return Res.res(4000,"该手机号已绑定了账号");
+        } else if (type == 2) {
+            if (userDAO.searchPhone(key) != null) {
+                return Res.res(4000, "该手机号已绑定了账号");
             }
-            if (RegExpUtils.useRegexp(key,GloableVar.phoneReg)){
-               return Res.res(2000,"修改成功",userDAO.searchById(uid));
-            }else {
-                return Res.res(4000,"手机格式有误");
+            if (RegExpUtils.useRegexp(key, GloableVar.phoneReg)) {
+                return Res.res(2000, "修改成功", userDAO.searchById(uid));
+            } else {
+                return Res.res(4000, "手机格式有误");
             }
         }
 
-        return Res.res(4000,"type错误");
+        return Res.res(4000, "type错误");
+    }
+
+    @Override
+    public ResultVO resetPwd(String key, int type, String password) {
+        User user = null;
+        String oldPwd = null;
+        if (type == 1) {
+            user = userDAO.searchEmail(key);
+            oldPwd = user.getPassword();
+        } else if (type == 2) {
+            user = userDAO.searchPhone(key);
+            oldPwd = user.getPassword();
+        } else {
+            return Res.res(4000, "type错误");
+        }
+        long id = user.getUserId();
+        try {
+            password = RSAUtils.decrypt(password);
+            if (!RegExpUtils.useRegexp(password, GloableVar.pwdReg)) {
+                return Res.res(2000, "密码必须到8-16位数字和字母", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Res.res(5000, "服务器处理异常");
+        }
+        if (new BCryptPasswordEncoder().matches(password, oldPwd)) {
+            return Res.res(2000, "新密码与旧密码不能相同");
+        } else {
+            password = new BCryptPasswordEncoder().encode(password);
+            user.setPassword(password);
+            if (userDAO.resetPassword(user) > 0) {
+                if (stringRedisTemplate.opsForValue().get(id + "") != null) {
+                    stringRedisTemplate.expire(id + "", stringRedisTemplate.getExpire(id + "") + 1, TimeUnit.MILLISECONDS);
+                }
+                return Res.res(2000, "修改成功");
+            }
+        }
+        return Res.res(5000, "未知错误");
     }
 }

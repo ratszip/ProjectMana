@@ -32,7 +32,7 @@ public class FunctionServiceImpl implements FunctionService {
         project.setCreateUser(uid);
         List<Project> lp = null;
         List<Module> lm = null;
-        if ((lp = projectDAO.getAllProject(project)) == null) {
+        if ((lp = projectDAO.getAllProjectDet(project)) == null) {
             Res.res(2000, "请先创建项目");
         } else {
             for (Project po : lp) {

@@ -6,8 +6,9 @@ import com.thf.entity.Project;
 public interface ProjectService {
     ResultVO createProject(String token,Project project);
     ResultVO updateProject(String token,Project project);
-    ResultVO searchById(long id);
-    ResultVO searchKey(String key);
-    ResultVO deleteProject(String token,Project project);
-    ResultVO getAllProject(String token);
+    ResultVO searchById(long id,String token);
+    ResultVO searchMyKey(String token,String key);
+//    ResultVO deleteProject(String token,Project project);
+    ResultVO getAllProjectDetail(String token,int type);
+    ResultVO getList(String token,int type);
 }

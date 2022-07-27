@@ -2,8 +2,6 @@ package com.thf.common;
 
 import com.thf.common.oo.Res;
 import com.thf.common.oo.ResultVO;
-import com.thf.common.utils.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +10,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLSyntaxErrorException;
 
 /**
  * @description: 自定义异常处理
- * @author: DT
- * @date: 2021/4/19 21:51
- * @version: v1.0
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,9 +22,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理自定义的业务异常
-     * @param req
-     * @param e
-     * @return
+     * @return ResultVO
      */
     @ExceptionHandler(value = BizException.class)
     @ResponseBody
@@ -39,9 +33,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理空指针的异常
-     * @param req
-     * @param e
-     * @return
+     * @return ResultVO
      */
     @ExceptionHandler(value =NullPointerException.class)
     @ResponseBody
@@ -50,33 +42,39 @@ public class GlobalExceptionHandler {
         return Res.res(5000,"空指针错误");
     }
 
-//    /**
-//     * 处理token异常
-//     * @param req
-//     * @param e
-//     * @return
-//     */
-//    @ExceptionHandler(value = ExpiredJwtException.class)
-//    @ResponseBody
-//    public ResultVO exceptionHandler(HttpServletRequest req, ExpiredJwtException e){
-//        logger.error("token过期！原因是:",e);
-//        if(JwtUtil.isTokenExpired(e.getClaims())) {
-//            return Res.res(40002, "token过期");
-//        }
-//        return null;
-//    }
 
     /**
      * 处理token异常
-     * @param req
-     * @param e
-     * @return
+     * @return ResultVO
      */
     @ExceptionHandler(value = UnsupportedJwtException.class)
     @ResponseBody
     public ResultVO exceptionHandler(HttpServletRequest req, UnsupportedJwtException e){
         logger.error("token不合法！原因是:",e);
         return Res.res(40003,"token不合法");
+    }
+
+    /**
+     * 处理类型转换异常
+     * @return ResultVO
+     */
+    @ExceptionHandler(value = ClassCastException.class)
+    @ResponseBody
+    public ResultVO exceptionHandler(HttpServletRequest req, ClassCastException e){
+        logger.error("类型转换错误！原因是:",e);
+        return Res.res(5000,"服务器类型转换异常");
+    }
+
+    /**
+     * 处理类型SQL异常
+     * @return ResultVO
+     */
+    @ExceptionHandler(value = SQLSyntaxErrorException.class)
+    @ResponseBody
+    public ResultVO exceptionHandler(HttpServletRequest req, SQLSyntaxErrorException e){
+        logger.error("sql错误！原因是:",e);
+        return Res.res(5000,"服务器SQL执行异常");
+
     }
 }
 

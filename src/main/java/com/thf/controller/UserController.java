@@ -238,4 +238,35 @@ public class UserController {
         }
         return userService.resetContact(token, type, key);
     }
+
+    /**
+     * 找回密码
+     *
+     * @param type
+     * @param key
+     * @return
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "password", value = "新的密码", dataType = "String",required = true, paramType = "body"),
+            @ApiImplicitParam(name = "type", value = "1是邮箱2是手机", dataType = "int",required = true, paramType = "body"),
+            @ApiImplicitParam(name = "key", value = "手机或邮箱", dataType = "String",required = true, paramType = "header"),
+            @ApiImplicitParam(name = "code", value = "验证码", required = true, dataType = "String", paramType = "body")
+    })
+    @ApiOperation(value = "找回密码", httpMethod = "POST")
+    @RequestMapping("/find/password")
+    public ResultVO findpwd(HttpServletRequest request,
+                                 @MultiRequestBody int type,
+                                 @MultiRequestBody String key,
+                                 @MultiRequestBody String password,
+                                 @MultiRequestBody String code) {
+        HttpSession session = request.getSession();
+        String vcode = (String) session.getAttribute(key);
+        if (session.getAttribute(key) == null) {
+            return new ResultVO(4000, "验证码过期,请重新发送");
+        }
+        if (!code.equals(code)) {
+            return new ResultVO(4000, "验证码错误");
+        }
+        return userService.resetPwd(key, type, password);
+    }
 }
