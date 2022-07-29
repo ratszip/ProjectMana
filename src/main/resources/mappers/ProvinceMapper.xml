@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.thf.dao.ProvinceDAO">
+    <resultMap id="provinceMap" type="Province">
+        <id column="id" property="sId"/>
+        <result column="name" property="sName"/>
+    </resultMap>
+
+    <select id="selectAll" parameterType="java.util.List" resultMap="provinceMap">
+        SELECT
+        *
+        FROM
+        city
+    </select>
+
+    <select id="selectById" parameterType="java.util.List" resultMap="provinceMap">
+        select * from province where id=#{sId}
+    </select>
+
+</mapper>

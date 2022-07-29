@@ -65,7 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
             long rid = projectDAO.searchById(pid).getRelateUser();
             if (cid == uid || rid == uid) {
                 return Res.res(2000, "搜索成功", project);
-            }else {
+            } else {
                 return Res.res(2000, "项目与用户不匹配");
             }
         }
@@ -138,4 +138,23 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectVO projectVO = new ProjectVO(projectList, projectList.size());
         return Res.res(2000, "获取项目列表成功", projectVO);
     }
+
+    @Override
+    public ResultVO getProjectDetail(String token, long pid) {
+        long uid = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
+        List<Module> moduleList = moduleDAO.searchAllModule(pid);
+        for (Module mo : moduleList) {
+            List<Function> functionList = functionDAO.searchAllFunction(mo.getMId());
+            mo.setFunctionList(functionList);
+        }
+        Project projectDB=projectDAO.searchById(pid);
+        long rid=projectDB.getRelateUser();
+        long cid=projectDB.getCreateUser();
+        if(uid==rid||cid==uid){
+            projectDB.setModuleList(moduleList);
+            return Res.res(2000, "获取项目详情成功", projectDB);
+        }
+       return Res.res(2000,"项目不属于对应用户");
+    }
 }
+
