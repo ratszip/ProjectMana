@@ -11,10 +11,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -99,5 +96,15 @@ public class ProjectController {
     @RequestMapping("/list")
     public ResultVO projectList(@RequestHeader String token, @MultiRequestBody int type) {
         return projectService.getList(token, type);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true),
+            @ApiImplicitParam(name = "pid", value = "项目id", dataType = "long", paramType = "body", required = true)
+    })
+    @ApiOperation(value = "项目详情", httpMethod = "POST")
+    @RequestMapping("/detail")
+    public ResultVO projectDtl(@RequestHeader String token, @MultiRequestBody long pid) {
+        return projectService.getProjectDetail(token, pid);
     }
 }

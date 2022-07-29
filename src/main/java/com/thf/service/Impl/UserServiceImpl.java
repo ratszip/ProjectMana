@@ -135,6 +135,7 @@ public class UserServiceImpl implements UserService {
                     return Res.res(5000, "服务器密码处理异常");
                 }
                 user.setPassword(password);
+                user.setUsername("我的名字");
                 user.setRegisterTime(System.currentTimeMillis());
                 if (insertUser(user) != null) {
 

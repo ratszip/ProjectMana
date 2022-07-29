@@ -11,4 +11,5 @@ public interface ProjectService {
 //    ResultVO deleteProject(String token,Project project);
     ResultVO getAllProjectDetail(String token,int type);
     ResultVO getList(String token,int type);
+    ResultVO getProjectDetail(String token,long pid);
 }
