@@ -2,19 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.thf.dao.ProvinceDAO">
     <resultMap id="provinceMap" type="Province">
-        <id column="id" property="sId"/>
-        <result column="name" property="sName"/>
+        <id column="id" property="provinceId"/>
+        <result column="name" property="provinceName"/>
     </resultMap>
 
     <select id="selectAll" parameterType="java.util.List" resultMap="provinceMap">
         SELECT
         *
         FROM
-        city
+        province
     </select>
 
     <select id="selectById" parameterType="java.util.List" resultMap="provinceMap">
-        select * from province where id=#{sId}
+        select * from province where id=#{provinceId}
     </select>
 
 </mapper>

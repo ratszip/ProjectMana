@@ -130,7 +130,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (Project po : projectList) {
             List<Module> moduleList = moduleDAO.searchAllModule(po.getProjectId());
             for (Module mo : moduleList) {
-                List<Function> functionList = functionDAO.searchAllFunction(mo.getMId());
+                List<Function> functionList = functionDAO.searchAllFunction(mo.getMid());
                 mo.setFunctionList(functionList);
             }
             po.setModuleList(moduleList);
@@ -144,7 +144,7 @@ public class ProjectServiceImpl implements ProjectService {
         long uid = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
         List<Module> moduleList = moduleDAO.searchAllModule(pid);
         for (Module mo : moduleList) {
-            List<Function> functionList = functionDAO.searchAllFunction(mo.getMId());
+            List<Function> functionList = functionDAO.searchAllFunction(mo.getMid());
             mo.setFunctionList(functionList);
         }
         Project projectDB=projectDAO.searchById(pid);

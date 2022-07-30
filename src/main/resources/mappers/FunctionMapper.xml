@@ -2,64 +2,65 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.thf.dao.FunctionDAO">
     <resultMap id="functionMap" type="Function">
-        <id column="f_id" property="fId"/>
-        <result column="f_des" property="fDes"/>
-        <result column="f_name" property="fName"/>
-        <result column="f_status" property="fStatus"/>
-        <result column="f_progress" property="fProgress"/>
-        <result column="f_start_time" property="fStartTime"/>
-        <result column="f_end_time" property="fEndTime"/>
-        <result column="f_act_time" property="fActTime"/>
-        <result column="m_id" property="mId"/>
-        <result column="f_create_time" property="fCreateTime"/>
+        <id column="f_id" property="fid"/>
+        <result column="f_des" property="fdes"/>
+        <result column="f_name" property="fname"/>
+        <result column="f_status" property="fstatus"/>
+        <result column="f_progress" property="fprogress"/>
+        <result column="f_start_time" property="fstartTime"/>
+        <result column="f_end_time" property="fendTime"/>
+        <result column="f_act_end_time" property="factEndTime"/>
+        <result column="f_create_user" property="fcreateUser"/>
+        <result column="m_id" property="mid"/>
+        <result column="f_create_time" property="fcreateTime"/>
     </resultMap>
-    <insert id="insert" useGeneratedKeys="true" keyProperty="fId">
-        insert into function(
-        <if test="fCreateTime != null and fCreateTime != ''">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="fid">
+        insert into function(f_create_user,
+        <if test="fcreateTime != null and fcreateTime != ''">
             f_create_time,
         </if>
-        <if test="fName != null and fName != ''">
+        <if test="fname != null and fname != ''">
             f_name,
         </if>
-        <if test="fDes != null and fDes != ''">
+        <if test="fdes != null and fdes != ''">
             f_des,
         </if>
-        <if test="fStatus != null and fStatus != ''">
+        <if test="fstatus != null and fstatus != ''">
             f_status,
         </if>
-        <if test="fProgress != null and fProgress != ''">
+        <if test="fprogress != null and fprogress != ''">
             f_progress,
         </if>
-        <if test="fStartTime != null and fStartTime != ''">
+        <if test="fstartTime != null and fstartTime != ''">
             f_start_time,
         </if>
-        <if test="fEndTime != null and fEndTime != ''">
+        <if test="fendTime != null and fendTime != ''">
             f_end_time,
         </if>
         m_id)
-        values(
-        <if test="fCreateTime != null and fCreateTime != ''">
-            #{fCreateTime},
+        values(#{fcreateUser},
+        <if test="fcreateTime != null and fcreateTime != ''">
+            #{fcreateTime},
         </if>
-        <if test="fName != null and fName != ''">
-            #{fName},
+        <if test="fname != null and fname != ''">
+            #{fname},
         </if>
-        <if test="fDes != null and fDes != ''">
-            #{fDes},
+        <if test="fdes != null and fdes != ''">
+            #{fdes},
         </if>
-        <if test="fStatus != null and fStatus != ''">
-            #{fStatus},
+        <if test="fstatus != null and fstatus != ''">
+            #{fstatus},
         </if>
-        <if test="fProgress != null and fProgress != ''">
-            #{fProgress},
+        <if test="fprogress != null and fprogress != ''">
+            #{fprogress},
         </if>
-        <if test="fStartTime != null and fStartTime != ''">
-            #{fStartTime},
+        <if test="fstartTime != null and fstartTime != ''">
+            #{fstartTime},
         </if>
-        <if test="fEndTime != null and fEndTime != ''">
-            #{fEndTime},
+        <if test="fendTime != null and fendTime != ''">
+            #{fendTime},
         </if>
-        #{mId})
+        #{mid})
     </insert>
     <select id="searchById" resultMap="functionMap">
         SELECT
@@ -67,45 +68,45 @@
         FROM
         function
         WHERE
-        f_id=#{fId}
+        f_id=#{fid}
     </select>
     <update id="update">
         UPDATE function
         <set>
-            <if test="fName != null and fName != ''">
-                f_name=#{fName},
+            <if test="fname != null and fname != ''">
+                f_name=#{fname},
             </if>
-            <if test="fDes != null and fDes != ''">
-                f_des=#{fDes},
+            <if test="fdes != null and fdes != ''">
+                f_des=#{fdes},
             </if>
-            <if test="fStatus != null and fStatus != ''">
-                f_status=#{fStatus},
+            <if test="fstatus != null and fstatus != ''">
+                f_status=#{fstatus},
             </if>
-            <if test="fProgress != null and fProgress != ''">
-                f_progress=#{fProgress},
+            <if test="fprogress != null and fprogress != ''">
+                f_progress=#{fprogress},
             </if>
-            <if test="fStartTime != null and fStartTime != ''">
-                f_start_time=#{fStartTime},
+            <if test="fstartTime != null and fstartTime != ''">
+                f_start_time=#{fstartTime},
             </if>
-            <if test="fEndTime != null and fEndTime != ''">
-                f_end_time=#{fEndTime},
+            <if test="fendTime != null and fendTime != ''">
+                f_end_time=#{fendTime},
             </if>
-            <if test="fProgress != null and fProgress != ''">
-                f_progress=#{fProgress}
+            <if test="factEndTime != null and factEndTime != ''">
+                f_act_end_time=#{factEndTime}
             </if>
         </set>
-        where f_id=#{fId}
+        where f_id=#{fid}
     </update>
     <select id="searchAllFunction" parameterType="java.util.List" resultMap="functionMap">
-        select * from function where m_id=#{mId}
+        select * from function where m_id=#{mid}
     </select>
     <delete id="delete">
         DELETE from function
-        where f_id=#{fId}
+        where f_id=#{fid}
     </delete>
 
     <delete id="deleteAll">
         DELETE from function
-        where m_id=#{mId}
+        where m_id=#{mid}
     </delete>
 </mapper>

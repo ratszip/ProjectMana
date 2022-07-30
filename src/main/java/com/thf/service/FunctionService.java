@@ -7,5 +7,7 @@ public interface FunctionService {
     ResultVO createFunc(String token,long mid, Function function);
     ResultVO updateFunc(String token,Function function);
     ResultVO deleteFunc(String token,long[] fidlist);
-    ResultVO searchFunc(long fid);
+    ResultVO searchFunc(String token,long fid);
+
+    ResultVO searchAllFunc(String token, long mid);
 }

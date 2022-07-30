@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Province {
-    private int sId;
-    private String sName;
+    private int provinceId;
+    private String provinceName;
     private List<City> cityList;
 }
