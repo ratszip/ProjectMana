@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface CityDAO {
     List<City> selectAllCity();
-    City selectById(int cid);
-    List<City> selectBySId(int sid);
+    City selectById(int cityId);
+    List<City> selectBySId(int provinceId);
 }

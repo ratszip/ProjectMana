@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 
 /**
@@ -29,6 +30,16 @@ public class GlobalExceptionHandler {
     public ResultVO bizExceptionHandler(HttpServletRequest req, BizException e){
         logger.error("发生业务异常！原因是：{}",e.getErrorMsg());
         return Res.res(e.getErrorCode(),e.getErrorMsg());
+    }
+    /**
+     * 处理自定义的业务异常
+     * @return ResultVO
+     */
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    @ResponseBody
+    public ResultVO bizExceptionHandler(HttpServletRequest req, IllegalArgumentException e){
+        logger.error("参数非法！原因是:",e);
+        return Res.res(4000,"参数错误");
     }
 
     /**
@@ -72,6 +83,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = SQLSyntaxErrorException.class)
     @ResponseBody
     public ResultVO exceptionHandler(HttpServletRequest req, SQLSyntaxErrorException e){
+        logger.error("sql错误！原因是:",e);
+        return Res.res(5000,"服务器SQL语法错误");
+
+    }
+
+    /**
+     * 处理类型SQL异常
+     * @return ResultVO
+     */
+    @ExceptionHandler(value = SQLException.class)
+    @ResponseBody
+    public ResultVO exceptionHandler(HttpServletRequest req, SQLException e){
         logger.error("sql错误！原因是:",e);
         return Res.res(5000,"服务器SQL执行异常");
 

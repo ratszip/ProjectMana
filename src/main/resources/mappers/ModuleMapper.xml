@@ -7,107 +7,108 @@
         from
         module
         where
-        m_id =#{mId}
+        m_id =#{mid}
     </select>
 
     <resultMap id="moduleMap" type="Module">
-        <id column="m_id" property="mId"/>
-        <result column="m_name" property="mName"/>
-        <result column="m_des" property="mDes"/>
-        <result column="m_status" property="mStatus"/>
-        <result column="m_progress" property="mProgress"/>
-        <result column="m_start_time" property="mStartTime"/>
-        <result column="p_id" property="pId"/>
-        <result column="m_end_time" property="mEndTime"/>
-        <result column="m_act_time" property="mActTime"/>
-        <result column="m_create_time" property="mCreateTime"/>
+        <id column="m_id" property="mid"/>
+        <result column="m_name" property="mname"/>
+        <result column="m_des" property="mdes"/>
+        <result column="m_status" property="mstatus"/>
+        <result column="m_progress" property="mprogress"/>
+        <result column="m_start_time" property="mstartTime"/>
+        <result column="p_id" property="pid"/>
+        <result column="m_end_time" property="mendTime"/>
+        <result column="m_act_time" property="mactTime"/>
+        <result column="m_create_time" property="mcreateTime"/>
+        <result column="m_create_user" property="mcreateUser"/>
 <!--        <collection property="functionList" ofType="Function" select="com.thf.dao.FunctionDAO.searchAll" column="m_id">-->
 <!--        </collection>-->
     </resultMap>
     <select id="searchAllModule" parameterType="java.util.List" resultMap="moduleMap">
-        select * from module where p_id=#{pId}
+        select * from module where p_id=#{pid}
     </select>
-    <insert id="insert"  useGeneratedKeys="true" keyProperty="mId">
-        insert into module(
-        <if test="mCreateTime != null and mCreateTime != ''">
+    <insert id="insert"  useGeneratedKeys="true" keyProperty="mid">
+        insert into module(m_create_user,
+        <if test="mcreateTime != null and mcreateTime != ''">
             m_create_time,
         </if>
-        <if test="mName != null and mName != ''">
+        <if test="mname != null and mname != ''">
             m_name,
         </if>
-        <if test="mDes != null and mDes != ''">
+        <if test="mdes != null and mdes != ''">
             m_des,
         </if>
-        <if test="mStatus != null and mStatus != ''">
+        <if test="mstatus != null and mstatus != ''">
             m_status,
         </if>
-        <if test="mProgress != null and mProgress != ''">
+        <if test="mprogress != null and mprogress != ''">
             m_progress,
         </if>
-        <if test="mStartTime != null and mStartTime != ''">
+        <if test="mstartTime != null and mstartTime != ''">
             m_start_time,
         </if>
-        <if test="mEndTime != null and mEndTime != ''">
+        <if test="mendTime != null and mendTime != ''">
             m_end_time,
         </if>
             p_id)
-        values(
-        <if test="mCreateTime != null and mCreateTime != ''">
-            #{mCreateTime},
+        values(#{mcreateUser},
+        <if test="mcreateTime != null and mcreateTime != ''">
+            #{mcreateTime},
         </if>
-        <if test="mName != null and mName != ''">
-            #{mName},
+        <if test="mname != null and mname != ''">
+            #{mname},
         </if>
-        <if test="mDes != null and mDes != ''">
-            #{mDes},
+        <if test="mdes != null and mdes != ''">
+            #{mdes},
         </if>
-        <if test="mStatus != null and mStatus != ''">
-            #{mStatus},
+        <if test="mstatus != null and mstatus != ''">
+            #{mstatus},
         </if>
-        <if test="mProgress != null and mProgress != ''">
-            #{mProgress},
+        <if test="mprogress != null and mprogress != ''">
+            #{mprogress},
         </if>
-        <if test="mStartTime != null and mStartTime != ''">
-            #{mStartTime},
+        <if test="mstartTime != null and mstartTime != ''">
+            #{mstartTime},
         </if>
-        <if test="mEndTime != null and mEndTime != ''">
-            #{mEndTime},
+        <if test="mendTime != null and mendTime != ''">
+            #{mendTime},
         </if>
-        #{pId})
+        #{pid})
     </insert>
 
     <update id="update">
         UPDATE module
         <set>
-            <if test="mName != null and mName != ''">
-                m_name=#{mName},
+            <if test="mname != null and mname != ''">
+                m_name=#{mname},
             </if>
-            <if test="mDes != null and mDes != ''">
-                m_des=#{mDes},
+            <if test="mdes != null and mdes != ''">
+                m_des=#{mdes},
             </if>
-            <if test="mStatus != null and mStatus != ''">
-                m_status=#{mStatus},
+            <if test="mstatus != null and mstatus != ''">
+                m_status=#{mstatus},
             </if>
-            <if test="mProgress != null and mProgress != '' and mProgress != 0">
-                m_progress=#{mProgress},
+            <if test="mprogress != null and mprogress != '' and mprogress != 0">
+                m_progress=#{mprogress},
             </if>
-            <if test="mStartTime != null and mStartTime != ''">
-                m_start_time=#{mStartTime},
+            <if test="mstartTime != null and mstartTime != ''">
+                m_start_time=#{mstartTime},
             </if>
-            <if test="mEndTime != null and mEndTime != ''">
-                m_end_time=#{mEndTime}
+            <if test="mendTime != null and mendTime != ''">
+                m_end_time=#{mendTime}
             </if>
         </set>
         where
-        m_id=#{mId}
+        m_id=#{mid}
     </update>
 
     <delete id="delete">
         DELETE from module
-        where m_id=#{mId}
+        where m_id=#{mid}
     </delete>
     <select id="searchAll">
         select * from module
-        where p_id=#{pId}
+        where p_id=#{pid}
     </select>
 </mapper>

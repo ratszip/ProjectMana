@@ -8,14 +8,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Function {
-    private Long fId;
-    private String fName;
-    private String fDes;
-    private int fStatus;
-    private Long fStartTime;
-    private Long fEndTime;
-    private Long fActTime;
-    private int fProgress;
-    private Long mId;
-    private Long fCreateTime;
+    private Long fid;
+    private String fname;
+    private String fdes;
+    private int fstatus;
+    private long fcreateUser;
+    private Long fstartTime;
+    private Long fendTime;
+    private Long factEndTime;
+    private int fprogress;
+    private Long mid;
+    private Long fcreateTime;
 }

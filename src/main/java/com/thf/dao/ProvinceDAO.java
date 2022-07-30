@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ProvinceDAO {
     List<Province> selectAll();
-    Province selectById(int sid);
+    Province selectById(int provinceId);
 }
