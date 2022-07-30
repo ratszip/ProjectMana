@@ -10,6 +10,8 @@ import com.thf.dao.ProjectDAO;
 import com.thf.entity.Function;
 import com.thf.entity.Module;
 import com.thf.entity.Project;
+import com.thf.service.FunctionService;
+import com.thf.service.ModuleService;
 import com.thf.service.ProjectService;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ public class ProjectServiceImpl implements ProjectService {
     ModuleDAO moduleDAO;
     @Resource
     FunctionDAO functionDAO;
+    @Resource
+    ModuleService moduleService;
 
     @Override
     public ResultVO createProject(String token, Project project) {
@@ -110,6 +114,20 @@ public class ProjectServiceImpl implements ProjectService {
             return Res.res(2000, "获取成功", projectVO);
         }
         return Res.res(2000, "没有数据", projectVO);
+    }
+
+    @Override
+    public ResultVO deleteProject(String token, long[] pidArr) {
+        long uid = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
+        for (long pid:pidArr) {
+            Project project=null;
+            if((project=projectDAO.searchById(pid))==null){
+                return Res.res(4000,"没有对应的项目pid:"+pid);
+            }
+           List<Module> moduleList= moduleDAO.searchAllModule(pid);
+//            moduleService.deleteModule(token);
+        }
+        return null;
     }
 
     @Override
