@@ -67,7 +67,7 @@ public class ModuleController {
 
 
     @ApiImplicitParam(name = "pid", value = "项目id", required = true, dataType = "long", paramType = "body")
-    @ApiOperation(value = "删除模块", httpMethod = "POST")
+    @ApiOperation(value = "项目下的模块列表详情", httpMethod = "POST")
     @RequestMapping("/list/detail")
     public ResultVO getMList(@RequestHeader String token,
                                  @ApiIgnore @MultiRequestBody long pid) {
@@ -77,7 +77,7 @@ public class ModuleController {
     }
 
     @ApiImplicitParam(name = "mid", value = "模块id", required = true, dataType = "long", paramType = "body")
-    @ApiOperation(value = "模块详情", httpMethod = "POST")
+    @ApiOperation(value = "单个模块详情", httpMethod = "POST")
     @RequestMapping("/detail")
     public ResultVO getMDtl(@RequestHeader String token,
                              @ApiIgnore @MultiRequestBody long mid) {

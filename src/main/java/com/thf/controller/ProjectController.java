@@ -57,7 +57,7 @@ public class ProjectController {
             @ApiImplicitParam(name = "pid", value = "projectid", dataType = "long", paramType = "body"),
             @ApiImplicitParam(name = "token", value = "用户token", dataType = "String", paramType = "header")
     })
-    @ApiOperation(value = "搜索项目", httpMethod = "POST")
+    @ApiOperation(value = "根据ID搜索项目", httpMethod = "POST")
     @RequestMapping("/search/pid")
     public ResultVO searcByid(@MultiRequestBody long pid,@RequestHeader String token) {
         return projectService.searchById(pid,token);
@@ -67,7 +67,7 @@ public class ProjectController {
             @ApiImplicitParam(name = "token", value = "用户token", dataType = "String", paramType = "header"),
             @ApiImplicitParam(name = "key", value = "搜索内容", dataType = "String", paramType = "body")
     })
-    @ApiOperation(value = "搜索项目", httpMethod = "POST")
+    @ApiOperation(value = "根据项目名搜索", httpMethod = "POST")
     @RequestMapping("/search/mine")
     public ResultVO searchourkey(@RequestHeader String token,
                                  @MultiRequestBody String key) {
@@ -102,7 +102,7 @@ public class ProjectController {
             @ApiImplicitParam(name = "token", value = "token", dataType = "String", paramType = "header", required = true),
             @ApiImplicitParam(name = "pid", value = "项目id", dataType = "long", paramType = "body", required = true)
     })
-    @ApiOperation(value = "项目详情", httpMethod = "POST")
+    @ApiOperation(value = "单个项目详情", httpMethod = "POST")
     @RequestMapping("/detail")
     public ResultVO projectDtl(@RequestHeader String token, @MultiRequestBody long pid) {
         return projectService.getProjectDetail(token, pid);

@@ -39,7 +39,7 @@ public class OpenController {
         return openApiService.searchAllCity();
     }
     @ApiImplicitParam(name = "id", value = "省份id", dataType = "int", paramType = "body", required = true)
-    @ApiOperation(value = "搜索城市", httpMethod = "POST")
+    @ApiOperation(value = "根据省份搜索城市", httpMethod = "POST")
     @RequestMapping("/province/city")
     public ResultVO searchPC(@MultiRequestBody int id) {
         return openApiService.searchSCity(id);
