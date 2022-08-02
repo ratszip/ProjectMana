@@ -107,4 +107,13 @@ public class ProjectController {
     public ResultVO projectDtl(@RequestHeader String token, @MultiRequestBody long pid) {
         return projectService.getProjectDetail(token, pid);
     }
+
+    @ApiImplicitParam(name = "pidArr", value = "项目id数组", required = true, dataType = "long[]", paramType = "body")
+    @ApiOperation(value = "删除项目", httpMethod = "POST")
+    @RequestMapping("/delete")
+    public ResultVO deleteProject(@RequestHeader String token,
+                                  @MultiRequestBody long[] pidArr) {
+        ResultVO resultVO = projectService.deleteProject(token,pidArr);
+        return resultVO;
+    }
 }
