@@ -70,8 +70,8 @@ public class FunctionController {
         return resultVO;
     }
 
-    @ApiImplicitParam(name = "mid", value = "模块id", required = true, dataType = "", paramType = "body")
-    @ApiOperation(value = "删除功能", httpMethod = "POST")
+    @ApiImplicitParam(name = "mid", value = "模块id", required = true, dataType = "long", paramType = "body")
+    @ApiOperation(value = "功能列表", httpMethod = "POST")
     @RequestMapping("/list")
     public ResultVO listFunc(@RequestHeader String token,
                                    @ApiIgnore @MultiRequestBody long mid) {
