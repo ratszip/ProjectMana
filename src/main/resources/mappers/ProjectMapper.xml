@@ -108,5 +108,9 @@
         </if>
     </select>
 
+    <delete id="delete">
+        DELETE from project
+        where project_id=#{projectId}
+    </delete>
 
 </mapper>

@@ -77,7 +77,7 @@ public class ModuleController {
     }
 
     @ApiImplicitParam(name = "mid", value = "模块id", required = true, dataType = "long", paramType = "body")
-    @ApiOperation(value = "删除模块", httpMethod = "POST")
+    @ApiOperation(value = "模块详情", httpMethod = "POST")
     @RequestMapping("/detail")
     public ResultVO getMDtl(@RequestHeader String token,
                              @ApiIgnore @MultiRequestBody long mid) {

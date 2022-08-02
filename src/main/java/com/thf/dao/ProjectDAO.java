@@ -10,4 +10,5 @@ public interface ProjectDAO {
      Project searchById(long id);
      List<Project> searchMyKeyD(Project project);
      List<Project> getAllProjectDet(Project project);
+     int delete(long id);
 }

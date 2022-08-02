@@ -119,15 +119,30 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ResultVO deleteProject(String token, long[] pidArr) {
         long uid = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
-        for (long pid:pidArr) {
-            Project project=null;
-            if((project=projectDAO.searchById(pid))==null){
-                return Res.res(4000,"没有对应的项目pid:"+pid);
+        for (long pid : pidArr) {
+            Project project = null;
+            if ((project = projectDAO.searchById(pid)) == null) {
+                return Res.res(4000, "没有对应的项目pid:" + pid);
             }
-           List<Module> moduleList= moduleDAO.searchAllModule(pid);
-//            moduleService.deleteModule(token);
+            long cid = projectDAO.searchById(pid).getCreateUser();
+            long rid = projectDAO.searchById(pid).getRelateUser();
+            if(cid!=uid&&rid!=uid){
+                return Res.res(4000,"只能删除自己的项目");
+            }
         }
-        return null;
+        for (long pid:pidArr) {
+            List<Module> moduleList = moduleDAO.searchAllModule(pid);
+            long[] midArr = new long[moduleList.size()];
+            for (int i = 0; i < moduleList.size(); i++) {
+                midArr[i] = moduleList.get(i).getMid();
+            }
+            moduleService.deleteModule(token, midArr);
+            projectDAO.delete(pid);
+            if (pidArr[pidArr.length - 1] == pid) {
+                return Res.res(2000, "删除成功");
+            }
+        }
+        return Res.res(5000, "服务器错误，删除失败");
     }
 
     @Override
@@ -165,14 +180,17 @@ public class ProjectServiceImpl implements ProjectService {
             List<Function> functionList = functionDAO.searchAllFunction(mo.getMid());
             mo.setFunctionList(functionList);
         }
-        Project projectDB=projectDAO.searchById(pid);
-        long rid=projectDB.getRelateUser();
-        long cid=projectDB.getCreateUser();
-        if(uid==rid||cid==uid){
+        Project projectDB;
+        if((projectDB = projectDAO.searchById(pid))==null){
+            return Res.res(4000,"该项目不存在");
+        }
+        long rid = projectDB.getRelateUser();
+        long cid = projectDB.getCreateUser();
+        if (uid == rid || cid == uid) {
             projectDB.setModuleList(moduleList);
             return Res.res(2000, "获取项目详情成功", projectDB);
         }
-       return Res.res(2000,"项目不属于对应用户");
+        return Res.res(2000, "项目不属于对应用户");
     }
 }
 
