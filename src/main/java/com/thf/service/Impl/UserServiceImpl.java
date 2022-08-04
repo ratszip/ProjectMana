@@ -51,12 +51,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultVO checkLogin(String key, String pwd, int type) {
+    public ResultVO checkLogin(String key, String pwd) {
         User user;
         String passwd = null;
-        if (type == 1) {
-            user = userDAO.searchEmail(key);
-            if (userDAO.searchEmail(key) == null) {
+            user = userDAO.searchEmailAndPhone(key);
+            if (userDAO.searchEmailAndPhone(key) == null) {
                 return Res.res(2000, "用户不存在");
             } else {
                 try {
@@ -65,32 +64,7 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                     return Res.res(5000, "服务器密码解析错误");
                 }
-                String oldpass = userDAO.searchEmail(key).getPassword();
-                Boolean b = new BCryptPasswordEncoder().matches(passwd, oldpass);
-                if (b) {
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("uid", user.getUserId());
-                    map.put("usertype", user.getUserType());
-                    String token = JwtUtil.generateToken(map, key, GloableVar.expireTime);
-                    stringRedisTemplate.opsForValue().set(user.getUserId() + "", user.getUserId() + "", System.currentTimeMillis() + GloableVar.expireTime, TimeUnit.MILLISECONDS);
-                    return Res.res(2000, "登录成功", token);
-                } else {
-                    return Res.res(2000, "密码错误");
-                }
-
-            }
-        } else if (type == 2) {
-            user = userDAO.searchPhone(key);
-            if (userDAO.searchPhone(key) == null) {
-                return Res.res(2000, "用户不存在");
-            } else {
-                try {
-                    passwd = RSAUtils.decrypt(pwd);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return Res.res(5000, "服务器密码解析错误");
-                }
-                if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmail(key).getPassword())) {
+                if (new BCryptPasswordEncoder().matches(passwd, userDAO.searchEmailAndPhone(key).getPassword())) {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("uid", user.getUserId());
                     map.put("usertype", user.getUserType());
@@ -101,8 +75,8 @@ public class UserServiceImpl implements UserService {
                     return Res.res(2000, "密码错误");
                 }
             }
-        }
-        return Res.res(2000, "type错误");
+//        }
+//        return Res.res(2000, "type错误");
     }
 
     @Override

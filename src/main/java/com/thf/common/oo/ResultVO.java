@@ -1,7 +1,5 @@
 package com.thf.common.oo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,11 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResultVO {
-    @ApiModelProperty(value = "状态码")
     private Integer code;
-    @ApiModelProperty(value = "说明")
     private String msg;
-    @ApiModelProperty(value = "数据")
     private Object data;
 
     public ResultVO(Integer code,String msg){
