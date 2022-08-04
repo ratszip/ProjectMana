@@ -10,7 +10,7 @@ public interface UserService {
     //根据id查询用户信息
     User searchById(long id);
     //用户登录
-    ResultVO checkLogin(String name, String pwd,int type);
+    ResultVO checkLogin(String name, String pwd时);
     //用户注册
     ResultVO userRegister(String key,String userPwd,String verifyCode, int verifyType);
     //修改资料

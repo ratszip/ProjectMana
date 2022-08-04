@@ -106,4 +106,13 @@
         WHERE
         user_id=#{userId}
     </update>
+    <select id="searchEmailAndPhone" resultMap="userMap">
+        select
+        *
+        from users
+        where
+        email = #{key}
+        OR
+        phone = #{key}
+    </select>
 </mapper>

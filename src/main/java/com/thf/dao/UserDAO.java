@@ -10,4 +10,5 @@ public interface UserDAO {
      User searchById(long userId);
      int resetPassword(User user);
      int resetContact(User user);
+     User searchEmailAndPhone(String key);
 }
