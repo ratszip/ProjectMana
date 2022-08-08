@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 @Controller
 @RequestMapping("/users")
 @ResponseBody
-@CrossOrigin
+//@CrossOrigin(originPatterns = "*",allowCredentials = "true",allowedHeaders = "*")
 public class UserController {
     @Resource
     private UserService userService;
@@ -50,11 +50,12 @@ public class UserController {
                            @MultiRequestBody @NotNull String code,
                            @MultiRequestBody @NotNull Integer type) {
         HttpSession session = request.getSession();
-        String vcode = (String) session.getAttribute(key);
-        if (session.getAttribute(key) == null) {
-            return new ResultVO(4000, "验证码过期,请重新发送");
+        String vmsg = (String) session.getAttribute(key);
+        if(vmsg==null){
+            return Res.res(4000,"验证码已失效，请重新发送");
         }
-        if (!code.equals(code)) {
+        String vcode=vmsg.split(",")[0];
+        if (!code.equals(vcode)) {
             return new ResultVO(2000, "验证码错误");
         }
         ResultVO resultVO = userService.userRegister(key, password, vcode, type);
@@ -80,6 +81,7 @@ public class UserController {
 
     /**
      * 修改个人资料
+     *
      * @param user
      * @param token
      * @return
@@ -89,7 +91,7 @@ public class UserController {
     public ResultVO update(@MultiRequestBody User user,
                            @RequestHeader String token) {
 
-        ResultVO resultVO = userService.updateInfo(user,token);
+        ResultVO resultVO = userService.updateInfo(user, token);
         return resultVO;
     }
 
@@ -104,22 +106,47 @@ public class UserController {
     @RequestMapping("/verifycode")
     public ResultVO sendVerifyCode(HttpServletRequest request,
                                    @MultiRequestBody @NotNull int type,
-                                   @MultiRequestBody @NotNull String key) {
+                                   @MultiRequestBody @NotNull String key,
+                                   @MultiRequestBody @NotNull int use
+    ) {
+        if (key.trim() == "") {
+            return Res.res(4000, "请输入账号在发送验证码");
+        }
+        //1注册2重置3登录
+        if (use == 1) {
+            if (userService.searchEandP(key) != null) {
+                return Res.res(4000, "账号已注册");
+            }
+        } else if (use == 2 || use == 3) {
+            if (userService.searchEandP(key) == null) {
+                return Res.res(4000, "账号未注册");
+            }
+        }
+
         String verifyCode = PMUtils.createVerifyCode(6);
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(key, verifyCode);
-        httpSession.setMaxInactiveInterval(GloableVar.codeExTime);
+
+        if(httpSession.getAttribute(key)!=null){
+            String attribute = (String) httpSession.getAttribute(key);
+            String stime = attribute.split(",")[1];
+            long l = System.currentTimeMillis() - Long.valueOf(stime);
+            if(l<60000){
+                return Res.res(2000,"60秒后再重新发送");
+            }
+        }
         if (type == 1) {
             try {
                 if (RegExpUtils.useRegexp(key.trim(), GloableVar.emailReg)) {
 //                    PMUtils.sendMail(email, "PMAPP验证码");
-                        SimpleMailMessage message = new SimpleMailMessage();
-                        message.setSubject("PMAPP验证码");
-                        message.setText("验证码为：" + verifyCode + "，5分钟内有效，请勿向他人泄露验证码信息");
-                        message.setTo(key);
-                        message.setFrom("351659704@qq.com");
-                        mailSender.send(message);
-                        return new ResultVO(2000, "验证码发送成功", null);
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setSubject("PMAPP验证码");
+                    message.setText("验证码为：" + verifyCode + "，5分钟内有效，请勿向他人泄露验证码信息");
+                    message.setTo(key);
+                    message.setFrom("351659704@qq.com");
+                    mailSender.send(message);
+                    httpSession.setAttribute(key, verifyCode+","+System.currentTimeMillis());
+                    httpSession.setMaxInactiveInterval(GloableVar.codeExTime);
+                    return new ResultVO(2000, "验证码发送成功", null);
 
                 } else {
                     return new ResultVO(4000, "邮箱格式错误", null);
@@ -130,6 +157,8 @@ public class UserController {
         } else if (type == 2) {
             Boolean b = SendSMS.sendSMS(verifyCode, key, GloableVar.ali_appcode);
             if (b) {
+                httpSession.setAttribute(key, verifyCode+","+System.currentTimeMillis());
+                httpSession.setMaxInactiveInterval(GloableVar.codeExTime);
                 return Res.res(2000, "发送成功");
             } else {
                 return Res.res(5000, "发送失败");
@@ -187,13 +216,14 @@ public class UserController {
                                  @MultiRequestBody int type,
                                  @MultiRequestBody String key,
                                  @RequestHeader String token,
-                                @MultiRequestBody String code) {
+                                 @MultiRequestBody String code) {
         HttpSession session = request.getSession();
-        String vcode = (String) session.getAttribute(key);
-        if (session.getAttribute(key) == null) {
+        String vmsg=(String) session.getAttribute(key);
+        if (vmsg == null) {
             return new ResultVO(4000, "验证码过期,请重新发送");
         }
-        if (!code.equals(code)) {
+        String vcode = vmsg.split(",")[0];
+        if (!code.equals(vcode)) {
             return new ResultVO(4000, "验证码错误");
         }
         return userService.resetContact(token, type, key);
@@ -201,7 +231,6 @@ public class UserController {
 
     /**
      * 找回密码
-     *
      * @param type
      * @param key
      * @return
@@ -209,16 +238,18 @@ public class UserController {
 
     @RequestMapping("/find/password")
     public ResultVO findpwd(HttpServletRequest request,
-                                 @MultiRequestBody int type,
-                                 @MultiRequestBody String key,
-                                 @MultiRequestBody String password,
-                                 @MultiRequestBody String code) {
+                            @MultiRequestBody int type,
+                            @MultiRequestBody String key,
+                            @MultiRequestBody String password,
+                            @MultiRequestBody String code) {
         HttpSession session = request.getSession();
-        String vcode = (String) session.getAttribute(key);
-        if (session.getAttribute(key) == null) {
+        String vmsg = (String) session.getAttribute(key);
+        if (vmsg == null) {
             return new ResultVO(4000, "验证码过期,请重新发送");
         }
-        if (!code.equals(code)) {
+        String vcode=vmsg.split(",")[0];
+
+        if (!code.equals(vcode)) {
             return new ResultVO(4000, "验证码错误");
         }
         return userService.resetPwd(key, type, password);
