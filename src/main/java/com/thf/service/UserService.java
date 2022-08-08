@@ -9,6 +9,9 @@ public interface UserService {
     User searchUserPhone(String key);
     //根据id查询用户信息
     User searchById(long id);
+
+    User searchEandP(String key);
+
     //用户登录
     ResultVO checkLogin(String name, String pwd时);
     //用户注册

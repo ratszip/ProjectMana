@@ -9,8 +9,6 @@ import com.thf.common.utils.RegExpUtils;
 import com.thf.dao.UserDAO;
 import com.thf.entity.User;
 import com.thf.service.UserService;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,7 +47,10 @@ public class UserServiceImpl implements UserService {
     public User searchById(long userId) {
         return userDAO.searchById(userId);
     }
-
+    @Override
+    public User searchEandP(String key) {
+        return userDAO.searchEmailAndPhone(key);
+    }
     @Override
     public ResultVO checkLogin(String key, String pwd) {
         User user;
