@@ -37,10 +37,15 @@ spring:
         max-wait: 8000
         max-idle: 8
         min-idle: 0
-
+  thymeleaf:
+    prefix: classpath:/templates
+    suffix: .html
+    cache: false
 mybatis:
   mapper-locations: classpath:mappers/*Mapper.xml
   type-aliases-package: com.thf.entity
+
+
 
 #
 #  spring
