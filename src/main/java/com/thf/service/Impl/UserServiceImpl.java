@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         String passwd = null;
             user = userDAO.searchEmailAndPhone(key);
             if (userDAO.searchEmailAndPhone(key) == null) {
-                return Res.res(2000, "用户不存在");
+                return Res.res(4000, "用户不存在");
             } else {
                 try {
                     passwd = RSAUtils.decrypt(pwd);
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
                     stringRedisTemplate.opsForValue().set(user.getUserId() + "", user.getUserId() + "", System.currentTimeMillis() + GloableVar.expireTime, TimeUnit.MILLISECONDS);
                     return Res.res(2000, "登录成功", token);
                 } else {
-                    return Res.res(2000, "密码错误");
+                    return Res.res(4000, "密码错误");
                 }
             }
 //        }
