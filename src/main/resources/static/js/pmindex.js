@@ -16,7 +16,8 @@ function settime($obj, time) {
 
 $(function () {
 
-
+//var ipaddr='http://127.0.0.1/';
+var ipaddr='http://106.52.174.44/';
     
 
     //全局的ajax访问，处理ajax清求时sesion超时 
@@ -92,7 +93,7 @@ $(function () {
             //提交数据的类型 POST GET
             type: "POST",
             //提交的网址
-            url: "http://127.0.0.1/users/verifycode",
+            url: ipaddr+"users/verifycode",
             //提交的数据
             data: JSON.stringify(json),
             xhrFields: {withCredentials:true},	//前端适配：允许session跨域
@@ -176,7 +177,7 @@ $(function () {
             //提交数据的类型 POST GET
             type: "POST",
             //提交的网址
-            url: "http://127.0.0.1/users/register",
+            url: ipaddr+"users/register",
             //提交的数据
             data: JSON.stringify(json),
             xhrFields: {withCredentials:true},	//前端适配：允许session跨域
@@ -230,7 +231,7 @@ $(function () {
             //提交数据的类型 POST GET
             type: "POST",
             //提交的网址
-            url: "http://127.0.0.1/users/login",
+            url: ipaddr+"users/login",
             //提交的数据
             data: JSON.stringify(json),
             xhrFields: {withCredentials:true},	//前端适配：允许session跨域
