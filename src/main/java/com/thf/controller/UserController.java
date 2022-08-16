@@ -2,6 +2,7 @@ package com.thf.controller;
 
 import com.thf.common.GloableVar;
 import com.thf.common.oo.Res;
+import com.thf.common.utils.JwtUtil;
 import com.thf.common.utils.PMUtils;
 import com.thf.common.utils.RegExpUtils;
 import com.thf.common.utils.SendSMS;
@@ -11,16 +12,20 @@ import com.thf.entity.User;
 import com.thf.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/users")
@@ -31,7 +36,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     JavaMailSender mailSender;
-
+    @Value("${prop.upload-folder}")
+    private String UPLOAD_FOLDER;
 
     /**
      * 注册接口
@@ -63,9 +69,44 @@ public class UserController {
     }
 
 
+    @RequestMapping("/profile/photo")
+    public ResultVO userProfile(@RequestParam(name = "file") MultipartFile file,
+                                @RequestHeader String token){
+        Long id = ((Number) JwtUtil.parseToken(token).get("uid")).longValue();
+        long time=System.currentTimeMillis();
+        if (file == null) {
+            return Res.res(4000, "请选择要上传的图片");
+        }
+        if (file.getSize() > 1024 * 1024 * 10) {
+            return Res.res(4000, "文件大小不能大于10M");
+        }
+        //获取文件后缀
+        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1, file.getOriginalFilename().length());
+        if (!"jpg,jpeg,gif,png".toUpperCase().contains(suffix.toUpperCase())) {
+            return Res.res(4000, "请选择jpg,jpeg,gif,png格式的图片");
+        }
+        String savePath = UPLOAD_FOLDER;
+        File savePathFile = new File(savePath);
+        if (!savePathFile.exists()) {
+            //若不存在该目录，则创建目录
+            savePathFile.mkdir();
+        }
+        //通过UUID生成唯一文件名
+        String picname=id.toString()+"-"+String.valueOf(time);
+
+        String filename = picname.replaceAll("-","") + "." + suffix;
+        try {
+            //将文件保存指定目录
+            file.transferTo(new File(savePath + filename));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Res.res(5000, "保存文件异常");
+        }
+        //返回文件名称
+        return Res.res(2000, "上传头像成功",filename );
+    }
     /**
      * 登录接口
-     *
      * @param key
      * @param password
      * @return

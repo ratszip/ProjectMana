@@ -6,6 +6,10 @@ server:
 
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -44,6 +48,12 @@ spring:
 mybatis:
   mapper-locations: classpath:mappers/*Mapper.xml
   type-aliases-package: com.thf.entity
+
+  # 配置SpringMVC文件上传限制，默认1M。注意MB要大写，不然报错。SpringBoot版本不同，配置项不同
+
+prop:
+  upload-folder: D:/jetbspace/prof/
+
 
 
 

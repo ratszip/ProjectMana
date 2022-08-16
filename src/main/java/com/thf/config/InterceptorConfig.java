@@ -2,6 +2,7 @@ package com.thf.config;
 
 import com.thf.common.interceptors.CheckTokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -9,7 +10,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
-
+    @Value("${prop.upload-folder}")
+    private String UPLOAD_FOLDER;
     @Autowired
     private CheckTokenInterceptor checkTokenInterceptor;
 
@@ -28,6 +30,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         //将templates目录下的CSS、JS文件映射为静态资源，防止Spring把这些资源识别成thymeleaf模版
         registry.addResourceHandler("/templates/**.js").addResourceLocations("classpath:/templates/");
         registry.addResourceHandler("/templates/**.css").addResourceLocations("classpath:/templates/");
+        registry.addResourceHandler("/img/**").addResourceLocations("file:" + UPLOAD_FOLDER);
         //其他静态资源
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         //swagger增加url映射
