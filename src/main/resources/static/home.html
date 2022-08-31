@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <base th:href="@{/}">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jsencrypt/3.2.1/jsencrypt.js"></script>
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <title>HOME</title>
+    <script src="js/jsencrypt.js"></script>
+    <script src="js/jquery-3.6.1.min.js"></script>
     <script src="js/jquery.cookie.js"></script>
+    <link rel="stylesheet" href="css/home.css">
     <script type="text/javascript">
         $(function(){
-           //var token= $.cookie('token');
           var tok= $.cookie('token')
            //console.log(tok);
         })
     </script>
-    
 </head>
 <body>
-    <button id="bt">test cursor</button>
+<div class="nav">
+    <div class="logo">
+        <img src="../static/image/pmlog.gif" alt="">
+    </div>
+    <ul class="nav_list">
+        <li>
+            <a href="#">项目管理</a>
+        </li>
+        <li>
+            <a href="#">历史日志</a>
+        </li>
+        <li>
+            <a href="#">统计数据</a>
+        </li>
+    </ul>
+</div>
+<div class="content"></div>
 </body>
 </html>

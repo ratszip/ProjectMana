@@ -16,9 +16,9 @@ function settime($obj, time) {
 
 $(function () {
 
-var ipaddr='http://127.0.0.1/';
-//var ipaddr='http://106.52.174.44/';
-    
+//    var ipaddr = 'http://127.0.0.1/';
+    var ipaddr='http://106.52.174.44/';
+
 
     //全局的ajax访问，处理ajax清求时sesion超时 
     $.ajaxSetup({
@@ -57,11 +57,9 @@ var ipaddr='http://127.0.0.1/';
         }
     });
 
-   
+
     //发送验证码
     $('#sendcode').click(function () {
-        $(this).css("cursor", "wait");
-        $(this).attr("disabled", true);
         var tab = $('input:radio:checked').val();
         var type;
         var key;
@@ -70,8 +68,6 @@ var ipaddr='http://127.0.0.1/';
             key = $('#email').val();
             if (key.trim() === '') {
                 alert("email can't be empty");
-                $(this).css("cursor", "");
-                $(this).attr("disabled", false);
                 return;
             }
         } else if (tab === 'p') {
@@ -79,8 +75,6 @@ var ipaddr='http://127.0.0.1/';
             key = $('#phone').val();
             if (key.trim() === '') {
                 alert("phone can't be empty");
-                $(this).css("cursor", "");
-                $(this).attr("disabled", false);
                 return;
             }
         }
@@ -93,12 +87,12 @@ var ipaddr='http://127.0.0.1/';
             //提交数据的类型 POST GET
             type: "POST",
             //提交的网址
-            url: ipaddr+"users/verifycode",
+            url: ipaddr + "users/verifycode",
             //提交的数据
             data: JSON.stringify(json),
-            xhrFields: {withCredentials:true},	//前端适配：允许session跨域
+            xhrFields: { withCredentials: true },	//前端适配：允许session跨域
             crossDomain: true,
-        
+
             //参数格式为json
             contentType: "application/json; charset=utf-8",
             //返回数据的格式
@@ -177,12 +171,12 @@ var ipaddr='http://127.0.0.1/';
             //提交数据的类型 POST GET
             type: "POST",
             //提交的网址
-            url: ipaddr+"users/register",
+            url: ipaddr + "users/register",
             //提交的数据
             data: JSON.stringify(json),
-            xhrFields: {withCredentials:true},	//前端适配：允许session跨域
+            xhrFields: { withCredentials: true },	//前端适配：允许session跨域
             crossDomain: true,
-        
+
             //参数格式为json
             contentType: "application/json; charset=utf-8",
             //返回数据的格式
@@ -210,12 +204,8 @@ var ipaddr='http://127.0.0.1/';
     $('#loginp').click(function () {
         var key = document.getElementById("keys").value;
         var password = document.getElementById("pwd").value;
-        $(this).css("cursor", "wait");
-        $(this).attr("disabled", true);
         if (key.trim() === '' || password === '') {
             alert("账号或密码不能为空");
-            $(this).css("cursor", "");
-            $(this).attr("disabled", false);
             return;
         }
         var encrypt = new JSEncrypt();
@@ -231,39 +221,35 @@ var ipaddr='http://127.0.0.1/';
             //提交数据的类型 POST GET
             type: "POST",
             //提交的网址
-            url: ipaddr+"users/login",
+            url: ipaddr + "users/login",
             //提交的数据
             data: JSON.stringify(json),
-            xhrFields: {withCredentials:true},	//前端适配：允许session跨域
+            xhrFields: { withCredentials: true },	//前端适配：允许session跨域
             crossDomain: true,
-        
+
             //参数格式为json
             contentType: "application/json; charset=utf-8",
             //返回数据的格式
             datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
             //成功返回之后调用的函数            
             success: function (data) {
-                alert(data.msg);
-                if(data.code===2000){
-                    $(this).css("cursor", "");
-                    $(this).attr("disabled", false);
-                    //cookie
+                if (data.code === 2000) {
                     $.cookie('token', data.data, { expires: 7, path: '/' });
-                   window.location.href="./home.html";
-                    // var tok= $.cookie('token')
-                    // console.log(tok);
+                    window.location.href = "./home.html";
+                    return;
+                } else {
+                    alert(data.msg);
+                    return;
                 }
-                //console.log(data)
-                $(this).css("cursor", "");
-                $(this).attr("disabled", false);
-                return;
+
             },
             //调用出错执行的函数
             error: function () {
                 //请求出错处理
                 alert("请求失败");
-                $(this).css("cursor", "");
-                $(this).attr("disabled", false);
+                return;
+            },
+            complete:function(){
                 return;
             }
 

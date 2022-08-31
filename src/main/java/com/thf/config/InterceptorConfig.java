@@ -19,10 +19,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(checkTokenInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/users/verifycode", "/users/login", "/users/register")
+                .excludePathPatterns("/users/verifycode", "/users/login", "/users/register","/users/find/password")
                 .excludePathPatterns("/open/**","/login.html","/home.html")
                 .excludePathPatterns("/asserts/**","/webjars/**")
-                .excludePathPatterns("/css/**","/js/**");
+                .excludePathPatterns("/css/**","/js/**","/static/image/**");
     }
 
     @Override
@@ -30,7 +30,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         //将templates目录下的CSS、JS文件映射为静态资源，防止Spring把这些资源识别成thymeleaf模版
         registry.addResourceHandler("/templates/**.js").addResourceLocations("classpath:/templates/");
         registry.addResourceHandler("/templates/**.css").addResourceLocations("classpath:/templates/");
-        registry.addResourceHandler("/img/**").addResourceLocations("file:" + UPLOAD_FOLDER);
+        registry.addResourceHandler("/image/**").addResourceLocations("file:" + UPLOAD_FOLDER);
         //其他静态资源
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         //swagger增加url映射
