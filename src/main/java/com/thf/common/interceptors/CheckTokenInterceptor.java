@@ -31,6 +31,7 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
         if ("OPTIONS".equalsIgnoreCase(method)) {
             return true;
         }
+
         String token = request.getHeader("token");
         if (token == null) {
             ResultVO resultVO = new ResultVO(4001, "请先登录！");
