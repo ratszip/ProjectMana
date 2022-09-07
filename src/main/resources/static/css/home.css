@@ -3,15 +3,16 @@
     padding: 0;
 }
 ul {
-    line-height: 60px;
+    line-height: 3.75rem;
     list-style: none;
 }
 a {
     text-decoration: none;
     color: #777777;
-    font-size: 28px;
+    font-size: 1.7rem;
 }
 .nav {
+    width: 100%;
     display: flex;
 }
 .logo img{
@@ -23,9 +24,85 @@ ul li{
     float: left;
 }
 ul li {
-    padding: 0 20px;
+    padding: 0 1.25rem;
 }
 .nav {
-    height: 60px;
+    height: 3.75rem;
     border-bottom: 1px #CCCCCC solid;
+}
+
+.content {
+    /* width: 75rem; */
+    padding-top: 4rem;
+    padding-left: 2rem;
+    margin: 0 auto;
+}
+
+.content a {
+    display: block;
+    width: 5.7rem;
+    height: 5.7rem;
+}
+.content a img {
+    width: 100%;
+    height: 100%;
+}
+
+.modal{
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.modal .container{
+    width: 30rem;
+    height: 32rem;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    box-sizing: border-box;
+    border-radius: 6px;
+    padding: 1em;
+}
+.modal .container h2::after {
+    display: block;
+    content: "";
+    margin-top: 8px;
+    border-top: #777777 solid 1px;
+}
+.modal .container .close{
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    border: 2px solid #fff;
+    cursor: pointer;
+    background-color: #008c8c;
+    text-align: center;
+    line-height: 2rem;
+}
+
+@media only screen and (max-width: 790px){
+    .logo {
+        display: none !important;
+    }
+    ul li a {
+        font-size: 1.5rem !important;
+    }
+    .modal{
+        width: 100;
+    }
+    .modal .container{
+        width: 20rem !important;
+        height: 22rem !important;
+    }
 }
