@@ -11,6 +11,66 @@
     margin: auto;
 }
 
+.findiv {
+    display:flex;
+    flex-flow: column;
+    height:15rem;
+}
+
+
+.findiv>input,.verify{
+       width:100%;
+       font-size:1rem;
+       margin:1rem 0;
+       outline:none;
+       border:none;
+       border-bottom: 1px solid #ccc
+}
+.findiv .findp {
+    display:none;
+}
+
+.container .verify {
+    border:none;
+}
+
+.container .verify input{
+   width:80%;
+   font-size:1rem;
+   outline:none;
+   border:none;
+   border-bottom: 1px solid #ccc
+}
+.container button {
+    outline: 0;
+    background: #f38401;
+    border: 0;
+    color: #FFFFFF;
+    width:2.6rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.findb {
+    padding-top:30px;
+    display:flex;
+    flex-flow:row;
+    align-items:flex-end;
+}
+.findb span {
+    flex:1;
+}
+.forget {
+font-size:0.8rem;
+}
+#reset {
+    background-color:#43A047;
+    height: 1.8rem;
+    width: 6rem;
+    margin-left:0;
+}
+.another {
+    font-size:0.8rem;
+}
 .form {
     position: relative;
     z-index: 1;
@@ -172,4 +232,47 @@ input:checked+label {
     font-size: 22;
     color: rgb(140, 230, 132);
     cursor: hand;
+}
+.modal{
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.modal .container{
+    width: 38rem;
+    height: 20rem;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    box-sizing: border-box;
+    border-radius: 6px;
+    padding: 1em;
+}
+.modal .container h2::after {
+    display: block;
+    margin-bottom:20px;
+    content: "";
+    margin-top: 8px;
+    border-top: #777777 solid 1px;
+}
+.modal .container .close{
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    border: 2px solid #fff;
+    cursor: pointer;
+    background-color: #008c8c;
+    text-align: center;
+    line-height: 2rem;
 }

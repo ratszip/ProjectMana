@@ -28,6 +28,11 @@ public class CheckTokenInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        response.setHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));//支持跨域请求
+        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Credentials", "true");//是否支持cookie跨域
+        response.setHeader("Access-Control-Allow-Headers", "Authorization,Origin, X-Requested-With, Content-Type, Accept,Access-Token");//Origin, X-Requested-With, Content-Type, Accept,Access-Token
+
         if ("OPTIONS".equalsIgnoreCase(method)) {
             return true;
         }

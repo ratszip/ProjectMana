@@ -11,13 +11,32 @@
     <script src="js/jquery.cookie.js"></script>
     <script src="js/pmindex.js"></script>
     <link rel="stylesheet" type="text/css" href="css/pmindex.css">
-
-
 </head>
 
 <body>
     <div class="login-page">
-
+        <div class="modal">
+            <div class="container">
+                <h2>找回密码</h2>
+                <div class="close">
+                    X
+                </div>
+                    <div class="findiv">
+                        <input type="text" class="finde" placeholder="输入邮箱" />
+                        <input type="text" class="findp" placeholder="输入手机号" />
+                        <div class="verify">
+                            <input type="number" class="ficode" oninput="if(value.length>6)value=value.slice(0,6)" placeholder="输入验证码">
+                            <button type="button" id="send">发送</button>
+                        </div>
+                        <input type="text" class="findpwd" placeholder="新的密码" />
+                        <div class="findb">
+                            <button type="button" id="reset">提交重置</button>
+                            <span></span>
+                            <a href="#" class="another">使用手机号重置</a>
+                        </div>
+                    </div>
+            </div>
+        </div>
         <div class="form">
             <form class="register-form">
                 <ul>
@@ -46,6 +65,7 @@
                 <input type="password" placeholder="password" id="pwd" /><button type="button"
                     id="loginp">login</button>
                 <p class="message">Not registered? <a href="#">Create an account</a></p>
+                <p> <a class="forget" href="#">忘记密码？</a></p>
             </form>
         </div>
     </div>
