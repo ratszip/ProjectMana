@@ -1,6 +1,7 @@
 $(function () {
 
-    var ipaddr = 'http://127.0.0.1/';
+        var ipaddr = 'http://localhost/';
+//        var ipaddr = 'http://106.52.174.44/';
 
     //全局的ajax访问，处理ajax清求时sesion超时
     $.ajaxSetup({
@@ -14,11 +15,9 @@ $(function () {
         }
     });
     $('.add').click(function () {
-        // console("clicked");
         $('.modal').css({"display":"block"});
     });
     $('.close').click(function () {
-        // console("clicked");
         $('.modal').css({"display":"none"});
     });
 })

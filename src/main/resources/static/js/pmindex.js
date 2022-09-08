@@ -2,7 +2,7 @@ function settime($obj, time) {
     if (time == 0) {
         $obj.attr("disabled", false);
         $obj.css("background", "#f38401").css("cursor", "pointer");
-        $obj.text("SEND");
+        $obj.text("发送");
         return;
     } else {
         $obj.attr("disabled", true);
@@ -17,7 +17,7 @@ function settime($obj, time) {
 $(function () {
 
     var ipaddr = 'http://127.0.0.1/';
-//    var ipaddr='http://106.52.174.44/';
+//    var ipaddr = 'http://106.52.174.44/';
 
 
     //全局的ajax访问，处理ajax清求时sesion超时 
@@ -56,7 +56,14 @@ $(function () {
             $('#code').val('');
         }
     });
-
+  $('.forget').click(function () {
+        $('.modal').css({"display":"block"});
+        $('.login-page>.form').css({"display":"none"});
+    });
+    $('.close').click(function () {
+        $('.modal').css({"display":"none"});
+        $('.form').css({"display":"block"});
+    });
 
     //发送验证码
     $('#sendcode').click(function () {
@@ -255,5 +262,169 @@ $(function () {
 
         });
     });
+
+
+
+        $('.another').click(function(){
+            var text=$('.another').text();
+            if (!text.includes('email')){
+                $('.finde').hide();
+                $('.findp').show();
+                $('.another').text('使用email找回密码');
+            }else{
+               $('.finde').show();
+               $('.findp').hide();
+                $('.another').text('使用手机找回密码');
+            }
+        });
+
+        //发送验证码
+        $('#send').click(function () {
+            var type;
+            var key;
+            var myreg=new RegExp('^.+@[A-Z0-9a-z]+\.[a-zA-Z]+$');
+            var edis = $('.finde').css('display');
+            if(edis!='none'){
+                type = 1;
+                key = $('.finde').val();
+                if (key.trim() === '') {
+                    alert("邮箱不能为空");
+                    return;
+                }
+                if(!myreg.test(key)){
+                    alert("请输入正确的邮箱格式");
+                    return;
+                }
+            }else{
+                type = 2;
+                key = $('.findp').val();
+                if (key.trim() === '') {
+                    alert("手机号不能为空");
+                    return;
+                }
+
+            }
+            var json = {
+                "key": key,
+                "type": type,
+                "use": 2 //用于找回密码
+            };
+            $.ajax({
+                //提交数据的类型 POST GET
+                type: "POST",
+                //提交的网址
+                url: ipaddr + "users/verifycode",
+                //提交的数据
+                data: JSON.stringify(json),
+                xhrFields: { withCredentials: true },	//前端适配：允许session跨域
+                crossDomain: true,
+
+                //参数格式为json
+                contentType: "application/json; charset=utf-8",
+                //返回数据的格式
+                datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+                //成功返回之后调用的函数
+                success: function (data) {
+                    if (data.code === 2000) {
+                        $('#send').css("cursor", "not-allowed");
+                        settime($("#send"), 60);
+                    } else {
+                        alert(data.msg);
+                        return;
+                    }
+                },
+                //调用出错执行的函数
+                error: function () {
+                    $('#send').css("cursor", "");
+                    //请求出错处理
+                    alert("请求失败");
+                    return;
+                }
+            });
+        });
+
+
+
+
+         $('#reset').click(function () {
+                var passwords;
+                var key;
+                var type;
+                var code;
+                var myreg=new RegExp('^.+@[A-Z0-9a-z]+\.[a-zA-Z]+$');
+                var pdis = $('.findp').css('display');
+                passwords = $('.findpwd').val();
+                if ($.trim(passwords) === '') {
+                    alert("密码不能为空");
+                    return;
+                }
+
+                if (pdis === 'none') {
+                    type = 1;
+                    key = $('.finde').val();
+                    if (key.trim() === '') {
+                        alert("email can't be empty");
+                        return;
+                    }
+                   if(!myreg.test(key)){
+                        alert("请输入正确的邮箱格式");
+                        return;
+                   }
+                } else{
+                    type = 2;
+                    key = $('findp').val();
+                    if (key.trim() === '') {
+                        alert("phone can't be empty");
+                        return;
+                    }
+                }
+                code = $('.ficode').val();
+                if (code.trim() == '') {
+                    alert("验证码不能为空");
+                    return;
+                }
+                var encrypt = new JSEncrypt();
+                encrypt.setPublicKey(publicKey);
+                var encrypted = encrypt.encrypt(passwords);
+                var json = {
+                    "key": key,
+                    "password": encrypted,
+                    "type": type,
+                    "code": code
+                };
+
+                $.ajax({
+                    //提交数据的类型 POST GET
+                    type: "POST",
+                    //提交的网址
+                    url: ipaddr + "users/find/password",
+                    //提交的数据
+                    data: JSON.stringify(json),
+                    xhrFields: { withCredentials: true },	//前端适配：允许session跨域
+                    crossDomain: true,
+
+                    //参数格式为json
+                    contentType: "application/json; charset=utf-8",
+                    //返回数据的格式
+                    datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+                    //成功返回之后调用的函数
+                    success: function (data) {
+                        alert(data.msg);
+                        $('.modal').css({"display":"none"});
+                        $('.form').css({"display":"block"});
+                        return;
+                        // console.log(typeof(data));
+                    },
+                    //调用出错执行的函数
+                    error: function () {
+                        //请求出错处理
+                        alert("请求失败");
+                        return;
+                    }
+
+                });
+
+            });
+
 
 });
