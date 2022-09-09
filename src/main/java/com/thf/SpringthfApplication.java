@@ -8,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @SpringBootApplication
 @MapperScan("com.thf.dao")
 public class SpringthfApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SpringthfApplication.class, args);
     }
