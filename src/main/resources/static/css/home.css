@@ -76,6 +76,7 @@ ul li {
     content: "";
     margin-top: 8px;
     border-top: #777777 solid 1px;
+    margin-bottom:20px;
 }
 .modal .container .close{
     width: 2rem;
@@ -89,6 +90,24 @@ ul li {
     background-color: #008c8c;
     text-align: center;
     line-height: 2rem;
+}
+.newpj input:nth-child(1),
+.newpj input:nth-child(2){
+   width:100%;
+   font-size:1rem;
+   margin:1rem 0;
+   outline:none;
+   border:none;
+   border-bottom: 1px solid #ccc
+}
+.pjbt {
+    margin-top:3rem ;
+    padding-left:30%;
+}
+.pjbt button {
+    font-size:1rem;
+    margin-left:1rem;
+    outline:none;
 }
 
 @media only screen and (max-width: 790px){

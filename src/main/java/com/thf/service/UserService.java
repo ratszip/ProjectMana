@@ -13,7 +13,7 @@ public interface UserService {
     User searchEandP(String key);
 
     //用户登录
-    ResultVO checkLogin(String name, String pwd时);
+    ResultVO checkLogin(String name, String pwd);
     //用户注册
     ResultVO userRegister(String key,String userPwd,String verifyCode, int verifyType);
     //修改资料

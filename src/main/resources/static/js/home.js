@@ -20,4 +20,7 @@ $(function () {
     $('.close').click(function () {
         $('.modal').css({"display":"none"});
     });
+    $('.cancelpj').click(function () {
+            $('.modal').css({"display":"none"});
+        });
 })
