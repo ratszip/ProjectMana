@@ -1,5 +1,6 @@
 package com.thf.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,10 @@ public class Project {
     private String describe;
     private int projectStatus;
     private long createUser;
+    private String relateUserList;
     private long createTime;
     private long relateUser;
+    private Long[] users;
     private long startTime;
     private long endTime;
     private int progress;

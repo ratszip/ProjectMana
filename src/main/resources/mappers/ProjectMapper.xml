@@ -6,8 +6,8 @@
         <if test="describe != null and describe != ''">
             `describe`,
         </if>
-        <if test="relateUser != null and relateUser != ''">
-            relate_user,
+        <if test="relateUserList != null and relateUserList != ''">
+            relate_user_list,
         </if>
         <if test="startTime != null and startTime != ''">
             start_time,
@@ -19,8 +19,8 @@
         <if test="describe != null and describe != ''">
             #{describe},
         </if>
-        <if test="relateUser != null and relateUser != ''">
-            #{relateUser},
+        <if test="relateUserList != null and relateUserList != ''">
+            #{relateUserList},
         </if>
         <if test="startTime != null and startTime != ''">
             #{startTime},
@@ -37,7 +37,7 @@
         <result column="project_status" property="projectStatus"/>
         <result column="create_user" property="createUser"/>
         <result column="create_time" property="createTime"/>
-        <result column="relate_user" property="relateUser"/>
+        <result column="relate_user_list" property="relateUserList"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
         <result column="progress" property="progress"/>
@@ -52,8 +52,8 @@
         <if test="createUser != null and createUser != '' and createUser != 0">
             create_user=#{createUser}
         </if>
-        <if test="relateUser != null and relateUser != '' and relateUser != 0">
-            OR relate_user=#{relateUser}
+        <if test="relateUserList != null and relateUserList != '' and relateUserList != 0">
+            OR relate_user_list=#{relateUserList}
         </if>
         </where>
     </select>
@@ -69,8 +69,8 @@
             <if test="projectStatus != null and projectStatus != ''">
                 project_status=#{projectStatus},
             </if>
-            <if test="relateUser != null and relateUser != ''">
-                relate_user=#{relateUser},
+            <if test="relateUserList != null and relateUserList != ''">
+                relate_user_list=#{relateUserList},
             </if>
             <if test="startTime != null and startTime != ''">
                 start_time=#{startTime},
@@ -97,8 +97,8 @@
         *
         from project
         where
-        <if test="relateUser != null">
-            relate_user=#{relateUser}
+        <if test="relateUserList != null">
+            relate_user_list=#{relateUserList}
         </if>
         <if test="createUser != null">
             or create_user=#{createUser}

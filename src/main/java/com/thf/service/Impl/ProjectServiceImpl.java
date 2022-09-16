@@ -4,6 +4,7 @@ import com.thf.common.oo.ProjectVO;
 import com.thf.common.oo.Res;
 import com.thf.common.oo.ResultVO;
 import com.thf.common.utils.JwtUtil;
+import com.thf.common.utils.StringFix;
 import com.thf.dao.FunctionDAO;
 import com.thf.dao.ModuleDAO;
 import com.thf.dao.ProjectDAO;
@@ -16,7 +17,10 @@ import com.thf.service.ProjectService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -33,6 +37,8 @@ public class ProjectServiceImpl implements ProjectService {
     public ResultVO createProject(String token, Project project) {
         Integer id = (Integer) JwtUtil.parseToken(token).get("uid");
         project.setCreateUser(id);
+        project.setRelateUserList(StringFix.arrayToString(project.getUsers()));
+        project.setUsers(null);
         project.setCreateTime(System.currentTimeMillis());
         if (projectDAO.insertProject(project) > 0) {
             return Res.res(2000, "创建成功", project);
@@ -47,8 +53,9 @@ public class ProjectServiceImpl implements ProjectService {
         long pid = project.getProjectId();
         if (projectDAO.searchById(pid) != null) {
             long cid = projectDAO.searchById(pid).getCreateUser();
-            long rid = projectDAO.searchById(pid).getRelateUser();
-            if (cid == uid || rid == uid) {
+            String ridstr = projectDAO.searchById(pid).getRelateUserList();
+            Long[] ridar=(Long[])StringFix.stringToArray(ridstr);
+            if (cid == uid || Arrays.stream(ridar).anyMatch(rid->rid==uid)) {
                 if (projectDAO.updateProject(project) > 0) {
                     Project pro = projectDAO.searchById(pid);
                     return Res.res(2000, "更新资料成功", pro);
@@ -66,8 +73,9 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectDAO.searchById(pid);
         if (project != null) {
             long cid = projectDAO.searchById(pid).getCreateUser();
-            long rid = projectDAO.searchById(pid).getRelateUser();
-            if (cid == uid || rid == uid) {
+            String ridstr = projectDAO.searchById(pid).getRelateUserList();
+            Long[] ridset = (Long[]) StringFix.stringToArray(ridstr);
+            if (cid == uid || Arrays.stream(ridset).anyMatch(rid->rid==uid)) {
                 return Res.res(2000, "搜索成功", project);
             } else {
                 return Res.res(2000, "项目与用户不匹配");
@@ -125,8 +133,9 @@ public class ProjectServiceImpl implements ProjectService {
                 return Res.res(4000, "没有对应的项目pid:" + pid);
             }
             long cid = projectDAO.searchById(pid).getCreateUser();
-            long rid = projectDAO.searchById(pid).getRelateUser();
-            if(cid!=uid&&rid!=uid){
+            String ridstr = projectDAO.searchById(pid).getRelateUserList();
+            Long[] ridset=(Long[]) StringFix.stringToArray(ridstr);
+            if(cid!=uid&&!Arrays.stream(ridset).anyMatch(rid->rid==uid)){
                 return Res.res(4000,"只能删除自己的项目");
             }
         }
@@ -184,9 +193,10 @@ public class ProjectServiceImpl implements ProjectService {
         if((projectDB = projectDAO.searchById(pid))==null){
             return Res.res(4000,"该项目不存在");
         }
-        long rid = projectDB.getRelateUser();
+        String ridstr = projectDAO.searchById(pid).getRelateUserList();
+        Long[] ridarr=(Long[])StringFix.stringToArray(ridstr);
         long cid = projectDB.getCreateUser();
-        if (uid == rid || cid == uid) {
+        if (Arrays.stream(ridarr).anyMatch(rid->rid==uid) || cid == uid) {
             projectDB.setModuleList(moduleList);
             return Res.res(2000, "获取项目详情成功", projectDB);
         }

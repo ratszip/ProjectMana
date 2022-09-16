@@ -16,8 +16,8 @@ function settime($obj, time) {
 
 $(function () {
 
-//    var ipaddr = 'http://127.0.0.1/';
-    var ipaddr = 'http://106.52.174.44/';
+    var ipaddr = 'http://127.0.0.1/';
+//    var ipaddr = 'http://106.52.174.44/';
 
 
     //全局的ajax访问，处理ajax清求时sesion超时 
@@ -209,6 +209,7 @@ $(function () {
 
     //登录
     $('#loginp').click(function () {
+        console.log('???????????00000');
         var key = document.getElementById("keys").value;
         var password = document.getElementById("pwd").value;
         if (key.trim() === '' || password === '') {
