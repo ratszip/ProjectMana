@@ -6,7 +6,7 @@
         <if test="describe != null and describe != ''">
             `describe`,
         </if>
-        <if test="relateUserList != null and relateUserList != ''">
+        <if test="relateUserList != null">
             relate_user_list,
         </if>
         <if test="startTime != null and startTime != ''">
@@ -19,8 +19,8 @@
         <if test="describe != null and describe != ''">
             #{describe},
         </if>
-        <if test="relateUserList != null and relateUserList != ''">
-            #{relateUserList},
+        <if test="relateUserList != null ">
+            #{relateUserList,jdbcType=OTHER,typeHandler=com.thf.common.JSONArrayHandler},
         </if>
         <if test="startTime != null and startTime != ''">
             #{startTime},
@@ -37,7 +37,7 @@
         <result column="project_status" property="projectStatus"/>
         <result column="create_user" property="createUser"/>
         <result column="create_time" property="createTime"/>
-        <result column="relate_user_list" property="relateUserList"/>
+        <result column="relate_user_list" property="relateUserList" typeHandler="com.thf.common.JSONArrayHandler"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
         <result column="progress" property="progress"/>
@@ -52,8 +52,9 @@
         <if test="createUser != null and createUser != '' and createUser != 0">
             create_user=#{createUser}
         </if>
-        <if test="relateUserList != null and relateUserList != '' and relateUserList != 0">
-            OR relate_user_list=#{relateUserList}
+        <if test="relateUser != null and relateUser != '' and relateUser != 0">
+<!--            OR relate_user_list=#{relateUserList}-->
+            or  JSON_CONTAINS(relate_user_list,JSON_ARRAY(#{relateUser}))
         </if>
         </where>
     </select>
@@ -69,7 +70,7 @@
             <if test="projectStatus != null and projectStatus != ''">
                 project_status=#{projectStatus},
             </if>
-            <if test="relateUserList != null and relateUserList != ''">
+            <if test="relateUserList != null">
                 relate_user_list=#{relateUserList},
             </if>
             <if test="startTime != null and startTime != ''">
@@ -97,8 +98,9 @@
         *
         from project
         where
-        <if test="relateUserList != null">
-            relate_user_list=#{relateUserList}
+        <if test="relateUser != null">
+<!--            relate_user_list=#{relateUser}-->
+            JSON_CONTAINS(relate_user_list,JSON_ARRAY(#{relateUser}))
         </if>
         <if test="createUser != null">
             or create_user=#{createUser}
