@@ -1,4 +1,4 @@
-package com.thf.common;
+package com.thf.common.batishandler;
 
 import com.alibaba.fastjson.JSONArray;
 import org.apache.ibatis.type.*;

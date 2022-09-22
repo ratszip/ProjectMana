@@ -37,7 +37,7 @@
         <result column="project_status" property="projectStatus"/>
         <result column="create_user" property="createUser"/>
         <result column="create_time" property="createTime"/>
-        <result column="relate_user_list" property="relateUserList" typeHandler="com.thf.common.JSONArrayHandler"/>
+        <result column="relate_user_list" property="relateUserList" typeHandler="com.thf.common.batishandler.JSONArrayHandler"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
         <result column="progress" property="progress"/>
