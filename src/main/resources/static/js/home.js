@@ -29,8 +29,8 @@ $(function () {
     $('.createpj').click(function(){
     var projectName = $('.pjname').val();
     var des = $('.pjdes').val();
-    var start=$('#beginpj').val();
-    var end=$('#endpj').val();
+    var start=new Date($('#beginpj').val()).getTime;
+    var end=new Date($('#endpj').val()).getTime;
         var json = {
                        "projectName":projectName,
                        "describe":des,
