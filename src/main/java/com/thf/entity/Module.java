@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -15,11 +16,11 @@ public class Module {
     private String mdes;
     private Integer mstatus;
     private Integer mprogress;
-    private Long mstartTime;
-    private Long mendTime;
+    private Date mstartTime;
+    private Date mendTime;
     private Long pid;
-    private Long mactEndTime;
-    private Long mcreateTime;
+    private Date mactEndTime;
+    private Date mcreateTime;
     private Long mcreateUser;
     private Long mrelateUser;
     List<Function> functionList;

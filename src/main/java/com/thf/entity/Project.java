@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -20,12 +21,12 @@ public class Project {
     private int projectStatus;
     private long createUser;
     private JSONArray relateUserList;
-    private long createTime;
+    private Date createTime;
     private long relateUser;
 //    private Long[] users;
-    private long startTime;
-    private long endTime;
+    private Date startTime;
+    private Date endTime;
     private int progress;
-    private long actEndTime;
+    private Date actEndTime;
     private List<Module> moduleList;
 }
